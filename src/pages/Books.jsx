@@ -102,7 +102,7 @@ const Books = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
 
       {/* Navbar */}
       <Navbar onLogout={handleLogout} />
@@ -153,64 +153,86 @@ const Books = () => {
         ) : (
 
           /* Book grid */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {books.map((book) => (
-              <div
-                key={book.id}
-                className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 hover:border-blue-300 transition group"
-              >
-                {/* Cover image */}
-                <div className="w-full h-40 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                  {book.cover_image ? (
-                    <img
-                      src={`http://localhost:8000/storage/${book.cover_image}`}
-                      alt={book.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-4xl">📘</span>
-                  )}
-                </div>
-
-                {/* Info */}
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 text-sm leading-tight line-clamp-2">
-                    {book.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    by {book.author}
-                  </p>
-                  {book.description && (
-                    <p className="text-xs text-gray-400 mt-1 line-clamp-2">
-                      {book.description}
-                    </p>
-                  )}
-                </div>
-
-                {/* Meta */}
-                <div className="flex items-center justify-between text-xs text-gray-400">
-                  <span>{book.total_pages} pages</span>
-                  {book.book_url && (
+          <div className="overflow-x-auto rounded-md">
+            <table className="w-full text-sm">
+              <tbody className="divide-y">
+                {books.map((book) => (
+                  <tr key={book.id} className="hover:bg-gray-50">
                     
-                    <a href='http://localhost:8000/storage/${book.book_url}'
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-500 hover:text-blue-700 font-medium"
-                    >
-                      Read PDF
-                    </a>
-                  )}
-                </div>
+                    {/* Cover */}
+                    <td className="px-4 py-3">
+                      {book.cover_image ? (
+                        <img
+                          src={`http://localhost:8000/storage/${book.cover_image}`}
+                          alt={book.title}
+                          className="w-30 h-30 object-cover rounded"
+                        />
+                      ) : (
+                        <span className="text-xl">📘</span>
+                      )}
+                    </td>
 
-                {/* Delete button */}
-                <button
-                  onClick={() => handleDelete(book.id)}
-                  className="w-full text-xs text-red-400 hover:text-red-600 border border-red-100 hover:border-red-300 py-1.5 rounded-lg transition opacity-0 group-hover:opacity-100"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+                    <td className="px-4 py-3"> {book.title} </td>
+
+                    {/* Progress bar */}
+                    <td className="px-4 py-3 w-64">
+                      {book.total_pages ? (
+                        <div>
+                          {/* Progress text */}
+                          <div className="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>{book.pages_read || 0} / {book.total_pages}</span>
+                            <span>
+                              {Math.min(
+                                100,
+                                Math.round(((book.pages_read || 0) / book.total_pages) * 100)
+                              )}%
+                            </span>
+                          </div>
+
+                          {/* Progress bar */}
+                          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div
+                              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                              style={{
+                                width: `${Math.min(
+                                  100,
+                                  ((book.pages_read || 0) / book.total_pages) * 100
+                                )}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400">No data</span>
+                      )}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-4 py-3 flex items-center gap-3">
+                      {book.book_url && (
+                        <a
+                          href={`http://localhost:8000/storage/${book.book_url}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition"
+                        >
+                          Read
+                        </a>
+                      )}
+
+                      <button
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition"
+                      >
+                        <span className="text-lg leading-none"></span>
+                        Update book
+                      </button>
+                      
+                    </td>
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
