@@ -8,4 +8,21 @@ export default defineConfig({
     react(), 
     tailwindcss(),
   ],
+  optimizeDeps: {
+    include: ['pdfjs-dist/build/pdf.worker.min.mjs'],
+  },
+  server: {
+    proxy: {
+      '/storage': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

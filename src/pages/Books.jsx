@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import PDFViewer from "../pages/PDFViewer";
 import Navbar from "../layout/Navbar";
 
 const Books = () => {
-  const [books, setBooks] = useState([]);
-  const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    author: "",
+  const [books,       setBooks]       = useState([]);
+  const [error,       setError]       = useState("");
+  const [showModal,   setShowModal]   = useState(false);
+  const [saving,      setSaving]      = useState(false);
+  const [selectedBook,setSelectedBook]= useState(null);
+  const [form,        setForm]        = useState({
+    title:       "",
+    author:      "",
     description: "",
     total_pages: "",
     cover_image: null,
-    book_url: null,
+    book_url:    null,
   });
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token    = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token) { navigate("/login"); return; }
@@ -62,16 +64,16 @@ const Books = () => {
 
     try {
       const data = new FormData();
-      data.append("title", form.title);
-      data.append("author", form.author);
+      data.append("title",       form.title);
+      data.append("author",      form.author);
       data.append("description", form.description);
       data.append("total_pages", form.total_pages);
       if (form.cover_image) data.append("cover_image", form.cover_image);
-      if (form.book_url) data.append("book_url", form.book_url);
+      if (form.book_url)    data.append("book_url",    form.book_url);
 
       await axios.post("http://localhost:8000/api/books", data, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization:  `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -102,9 +104,8 @@ const Books = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full bg-gray-50">
 
-      {/* Navbar */}
       <Navbar onLogout={handleLogout} />
 
       <div className="w-full px-6 py-8">
@@ -137,12 +138,8 @@ const Books = () => {
         {books.length === 0 ? (
           <div className="text-center py-24">
             <div className="text-6xl mb-4">📖</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">
-              No books yet
-            </h3>
-            <p className="text-sm text-gray-500 mb-6">
-              Add your first book to get started
-            </p>
+            <h3 className="text-lg font-medium text-gray-900 mb-1">No books yet</h3>
+            <p className="text-sm text-gray-500 mb-6">Add your first book to get started</p>
             <button
               onClick={() => setShowModal(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition"
@@ -152,35 +149,58 @@ const Books = () => {
           </div>
         ) : (
 
-          /* Book grid */
-          <div className="overflow-x-auto rounded-md">
+          /* Book table */
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
             <table className="w-full text-sm">
-              <tbody className="divide-y">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Cover</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Title</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Author</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide w-64">Progress</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
                 {books.map((book) => (
-                  <tr key={book.id} className="hover:bg-gray-50">
-                    
+                  <tr key={book.id} className="hover:bg-gray-50 transition">
+
                     {/* Cover */}
                     <td className="px-4 py-3">
                       {book.cover_image ? (
                         <img
                           src={`http://localhost:8000/storage/${book.cover_image}`}
                           alt={book.title}
-                          className="w-30 h-30 object-cover rounded"
+                          className="w-12 h-16 object-cover rounded-md"
                         />
                       ) : (
-                        <span className="text-xl">📘</span>
+                        <div className="w-12 h-16 bg-blue-50 rounded-md flex items-center justify-center">
+                          <span className="text-xl">📘</span>
+                        </div>
                       )}
                     </td>
 
-                    <td className="px-4 py-3"> {book.title} </td>
+                    {/* Title */}
+                    <td className="px-4 py-3">
+                      <p className="font-medium text-gray-900">{book.title}</p>
+                      {book.description && (
+                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
+                          {book.description}
+                        </p>
+                      )}
+                    </td>
+
+                    {/* Author */}
+                    <td className="px-4 py-3 text-gray-600">
+                      {book.author}
+                    </td>
 
                     {/* Progress bar */}
                     <td className="px-4 py-3 w-64">
                       {book.total_pages ? (
                         <div>
-                          {/* Progress text */}
                           <div className="flex justify-between text-xs text-gray-500 mb-1">
-                            <span>{book.pages_read || 0} / {book.total_pages}</span>
+                            <span>{book.pages_read || 0} / {book.total_pages} pages</span>
                             <span>
                               {Math.min(
                                 100,
@@ -188,8 +208,6 @@ const Books = () => {
                               )}%
                             </span>
                           </div>
-
-                          {/* Progress bar */}
                           <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                             <div
                               className="bg-blue-500 h-2 rounded-full transition-all duration-300"
@@ -208,25 +226,32 @@ const Books = () => {
                     </td>
 
                     {/* Actions */}
-                    <td className="px-4 py-3 flex items-center gap-3">
-                      {book.book_url && (
-                        <a
-                          href={`http://localhost:8000/storage/${book.book_url}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition"
-                        >
-                          Read
-                        </a>
-                      )}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
 
-                      <button
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition"
-                      >
-                        <span className="text-lg leading-none"></span>
-                        Update book
-                      </button>
-                      
+                        {book.book_url && (
+                          <button
+                            onClick={() => setSelectedBook(book)}
+                            className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
+                          >
+                            Read PDF
+                          </button>
+                        )}
+
+                        <button
+                          className="text-xs text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
+                        >
+                          Update
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(book.id)}
+                          className="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
+                        >
+                          Delete
+                        </button>
+
+                      </div>
                     </td>
 
                   </tr>
@@ -237,19 +262,25 @@ const Books = () => {
         )}
       </div>
 
+      {/* PDF Viewer — rendered OUTSIDE the table, once at page level */}
+      {selectedBook && (
+        <PDFViewer
+          bookUrl={`http://localhost:8000/${selectedBook.book_url}`}
+          bookId={selectedBook.id}
+          onClose={() => setSelectedBook(null)}
+        />
+      )}
+
       {/* Add Book Modal */}
       {showModal && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
           onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
         >
-          <div className="bg-white rounded-2xl w-full max-w-md p-6">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 max-h-screen overflow-y-auto">
 
-            {/* Modal header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Add new book
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-900">Add new book</h2>
               <button
                 onClick={() => setShowModal(false)}
                 className="text-gray-400 hover:text-gray-600 text-xl leading-none"
@@ -258,7 +289,6 @@ const Books = () => {
               </button>
             </div>
 
-            {/* Modal form */}
             <form onSubmit={handleSubmit} className="space-y-4">
 
               <div>
@@ -317,7 +347,6 @@ const Books = () => {
                 />
               </div>
 
-              {/* Cover image upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Cover image
@@ -337,7 +366,6 @@ const Books = () => {
                 </label>
               </div>
 
-              {/* PDF upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   PDF file
@@ -357,7 +385,6 @@ const Books = () => {
                 </label>
               </div>
 
-              {/* Modal actions */}
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
