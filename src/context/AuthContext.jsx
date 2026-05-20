@@ -4,15 +4,20 @@ import api from '../api/axios';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-    const [user, setUser]  = useState(localStorage.getItem('user'));
+    const [user, setUser] = useState(() => {
+        const saved = localStorage.getItem("user");
+        return saved ? JSON.parse(saved) : null;
+    });
     const [token, setToken] = useState(localStorage.getItem('token'));
 
-    const login = async (email, password) => {
-        const res = await api.post('/login', { email, password });
+    const login = (responseData) => {
+        const { token, user } = responseData;
+
         setToken(res.data.token);
-        setUser(res.data.user);
+        setUser(user);
+
         localStorage.setItem('token', res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("user", JSON.stringify(user));
     };
 
     const logout = async () => {

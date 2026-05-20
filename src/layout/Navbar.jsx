@@ -1,9 +1,13 @@
+import { useAuth } from "../context/AuthContext";
+
 export default function Navbar({ onLogout }) {
+    const { user, token, logout } = useAuth();
+
     return (
         <nav className="bg-white border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <span className="text-xl">📚</span>
-                <span className="font-semibold text-gray-900 text-lg">My Library</span>
+                <span className="font-semibold text-gray-900 text-lg">{ user?.name }'s Library</span>
             </div>
             <button
                 onClick={onLogout}
