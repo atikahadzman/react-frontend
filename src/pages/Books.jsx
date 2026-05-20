@@ -5,22 +5,22 @@ import PDFViewer from "../pages/PDFViewer";
 import Navbar from "../layout/Navbar";
 
 const Books = () => {
-  const [books,       setBooks]       = useState([]);
-  const [error,       setError]       = useState("");
-  const [showModal,   setShowModal]   = useState(false);
-  const [saving,      setSaving]      = useState(false);
-  const [selectedBook,setSelectedBook]= useState(null);
-  const [form,        setForm]        = useState({
-    title:       "",
-    author:      "",
+  const [books, setBooks] = useState([]);
+  const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [form, setForm] = useState({
+    title: "",
+    author: "",
     description: "",
     total_pages: "",
     cover_image: null,
-    book_url:    null,
+    book_url: null,
   });
 
   const navigate = useNavigate();
-  const token    = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token) { navigate("/login"); return; }
@@ -42,7 +42,9 @@ const Books = () => {
     try {
       await axios.post(
         "http://localhost:8000/api/logout", {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { 
+          headers: { Authorization: `Bearer ${token}` } 
+        }
       );
     } catch {}
     localStorage.removeItem("token");
@@ -64,12 +66,17 @@ const Books = () => {
 
     try {
       const data = new FormData();
-      data.append("title",       form.title);
-      data.append("author",      form.author);
+      data.append("title", form.title);
+      data.append("author", form.author);
       data.append("description", form.description);
       data.append("total_pages", form.total_pages);
-      if (form.cover_image) data.append("cover_image", form.cover_image);
-      if (form.book_url)    data.append("book_url",    form.book_url);
+      if (form.cover_image) {
+        data.append("cover_image", form.cover_image);
+      }
+
+      if (form.book_url) {
+        data.append("book_url", form.book_url);
+      }
 
       await axios.post("http://localhost:8000/api/books", data, {
         headers: {
@@ -80,8 +87,12 @@ const Books = () => {
 
       setShowModal(false);
       setForm({
-        title: "", author: "", description: "",
-        total_pages: "", cover_image: null, book_url: null,
+        title: "", 
+        author: "", 
+        description: "",
+        total_pages: "", 
+        cover_image: null, 
+        book_url: null,
       });
       fetchBooks();
     } catch (err) {
