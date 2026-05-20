@@ -6,7 +6,13 @@ export default function Navbar({ onLogout }) {
     return (
         <nav className="bg-white border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
-                <span className="text-xl">📚</span>
+                <span className="text-xl">
+                    <img
+                        src="/books.png"
+                        alt="logo"
+                        className="w-12 h-16"
+                    />
+                </span>
                 <span className="font-semibold text-gray-900 text-lg">{ user?.name }'s Library</span>
             </div>
             <button
