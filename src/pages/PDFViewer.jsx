@@ -1,17 +1,19 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Document, Page } from "react-pdf";
 import { pdfjs } from "react-pdf";
+import axios from "axios";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { useAuth } from "../context/AuthContext";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url
 ).toString();
 
-const STORAGE_KEY = (bookId) => `pdf_bookmarks_${bookId}`;
-
 const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, initialPage = 1, onClose }) => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const { user, token } = useAuth();
   const [numPages, setNumPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [scale, setScale] = useState(1.2);
@@ -24,13 +26,47 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
   const containerRef = useRef(null);
   const [progressId, setProgressId] = useState(initialProgressId ?? null);
 
-  // Save to localStorage whenever bookmarks or highlights change
+  // save bookmark
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY(bookId),
-      JSON.stringify({ bookmarks, highlights })
-    );
-  }, [bookmarks, highlights, bookId]);
+    if (!currentPage || !bookId) return;
+
+    const saveProgress = async () => {
+      try {
+        if (progressId) {
+          // axios argument order is -> axios.put(url, data, config)
+          await axios.put(apiUrl + `/progress/${progressId}`,
+            {
+              current_pages: currentPage,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+              },
+            },
+          );
+        } else {
+          await axios.post(apiUrl + "/progress",
+            {
+              user_id: user?.id,
+              book_id: bookId,
+              current_pages: currentPage,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+              },
+            }
+          );
+        }
+      } catch (err) {
+        console.error("Failed to save reading progress", err);
+      }
+    };
+
+    saveProgress();
+  }, [currentPage]);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -39,20 +75,25 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
 
   // Bookmark current page
   const toggleBookmark = () => {
-    const exists = bookmarks.find((b) => b.page === currentPage);
-    if (exists) {
-      setBookmarks(bookmarks.filter((b) => b.page !== currentPage));
-    } else {
-      setBookmarks([
-        ...bookmarks,
+    setBookmarks((prev) => {
+      const exists = prev.find((b) => b.page === currentPage);
+
+      // remove bookmark
+      if (exists) {
+        return prev.filter((b) => b.page !== currentPage);
+      }
+
+      // add bookmark
+      return [
+        ...prev,
         {
-          id:    Date.now(),
-          page:  currentPage,
+          id: Date.now(),
+          page: currentPage,
           label: `Page ${currentPage}`,
-          date:  new Date().toLocaleDateString(),
+          date: new Date().toLocaleDateString(),
         },
-      ]);
-    }
+      ];
+    });
   };
 
   const isBookmarked = bookmarks.some((b) => b.page === currentPage);
