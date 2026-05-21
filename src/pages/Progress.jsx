@@ -76,10 +76,9 @@ const Progress = () => {
         {/* Header row */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-2xl font-semibold text-gray-900">Your Reading Progress</h3>
-            <p className="text-sm text-gray-500 mt-0.5">
-              {books.length} {books.length === 1 ? "book" : "books"} in your library
-            </p>
+            <h3 className="text-2xl font-semibold text-gray-900">
+                {books.length} {books.length === 1 ? "book" : "books"} current reading
+            </h3>
           </div>
         </div>
 
