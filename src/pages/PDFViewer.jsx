@@ -11,7 +11,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 const STORAGE_KEY = (bookId) => `pdf_bookmarks_${bookId}`;
 
-const PDFViewer = ({ bookUrl, bookId, onClose }) => {
+const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, onClose }) => {
   const [numPages, setNumPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [scale, setScale] = useState(1.2);
@@ -22,16 +22,7 @@ const PDFViewer = ({ bookUrl, bookId, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [tool, setTool] = useState("none");
   const containerRef = useRef(null);
-
-  // Load saved bookmarks and highlights from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY(bookId));
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setBookmarks(parsed.bookmarks || []);
-      setHighlights(parsed.highlights || []);
-    }
-  }, [bookId]);
+  const [progressId, setProgressId] = useState(initialProgressId ?? null);
 
   // Save to localStorage whenever bookmarks or highlights change
   useEffect(() => {

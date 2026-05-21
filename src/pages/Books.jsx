@@ -5,6 +5,7 @@ import PDFViewer from "../pages/PDFViewer";
 import Navbar from "../layout/Navbar";
 
 const Books = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [books, setBooks] = useState([]);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -29,7 +30,7 @@ const Books = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/books", {
+      const res = await axios.get(apiUrl + "/books", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBooks(res.data);
@@ -41,7 +42,7 @@ const Books = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:8000/api/logout", {},
+        apiUrl + "/logout", {},
         { 
           headers: { Authorization: `Bearer ${token}` } 
         }
@@ -78,7 +79,7 @@ const Books = () => {
         data.append("book_url", form.book_url);
       }
 
-      await axios.post("http://localhost:8000/api/books", data, {
+      await axios.post(apiUrl + "/books", data, {
         headers: {
           Authorization:  `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
