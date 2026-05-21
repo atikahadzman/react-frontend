@@ -34,36 +34,13 @@ const Books = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await axios.get(apiUrl + "/progress/by-user", {
+      const res = await axios.get(apiUrl + "/books", {
         headers: { Authorization: `Bearer ${token}` },
-        params: { 
-          user_id: user?.id,
-        },
       });
-
-      const mapped = res.data.map((progress) => ({
-        ...progress.book,
-        current_pages: progress.current_pages,
-        progress_id: progress.id,
-      }));
-
-      setBooks(mapped);
+      setBooks(res.data);
     } catch {
       setError("Failed to fetch books");
     }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await axios.post(
-        apiUrl + "/logout", {},
-        { 
-          headers: { Authorization: `Bearer ${token}` } 
-        }
-      );
-    } catch {}
-    localStorage.removeItem("token");
-    navigate("/login");
   };
 
   const handleChange = (e) => {
@@ -117,29 +94,17 @@ const Books = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this book?")) return;
-    try {
-      await axios.delete(apiUrl + `/books/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBooks(books.filter((b) => b.id !== id));
-    } catch {
-      setError("Failed to delete book");
-    }
-  };
-
   return (
     <div className="min-h-screen w-full bg-gray-50">
 
-      <Navbar onLogout={handleLogout} />
+      <Navbar />
 
       <div className="w-full px-6 py-8">
 
         {/* Header row */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Books</h1>
+            <h3 className="text-2xl font-semibold text-gray-900">Books</h3>
             <p className="text-sm text-gray-500 mt-0.5">
               {books.length} {books.length === 1 ? "book" : "books"} in your library
             </p>
@@ -271,13 +236,6 @@ const Books = () => {
                           className="text-xs text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
                         >
                           Update
-                        </button>
-
-                        <button
-                          onClick={() => handleDelete(book.id)}
-                          className="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
-                        >
-                          Delete
                         </button>
 
                       </div>
