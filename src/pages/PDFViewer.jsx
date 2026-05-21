@@ -11,9 +11,9 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 const STORAGE_KEY = (bookId) => `pdf_bookmarks_${bookId}`;
 
-const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, onClose }) => {
+const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, initialPage = 1, onClose }) => {
   const [numPages, setNumPages] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [scale, setScale] = useState(1.2);
   const [bookmarks, setBookmarks] = useState([]);
   const [highlights, setHighlights] = useState([]);

@@ -3,9 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PDFViewer from "../pages/PDFViewer";
 import Navbar from "../layout/Navbar";
+import { useAuth } from "../context/AuthContext";
 
 const Books = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const mediaUrl = import.meta.env.VITE_MEDIA_URL;
+  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const [selectedProgressId, setSelectedProgressId] = useState(null);
+  const { user, token } = useAuth();
   const [books, setBooks] = useState([]);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -21,7 +26,6 @@ const Books = () => {
   });
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token) { navigate("/login"); return; }
@@ -30,10 +34,20 @@ const Books = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await axios.get(apiUrl + "/books", {
+      const res = await axios.get(apiUrl + "/progress/by-user", {
         headers: { Authorization: `Bearer ${token}` },
+        params: { 
+          user_id: user?.id,
+        },
       });
-      setBooks(res.data);
+
+      const mapped = res.data.map((progress) => ({
+        ...progress.book,
+        current_pages: progress.current_pages,
+        progress_id: progress.id,
+      }));
+
+      setBooks(mapped);
     } catch {
       setError("Failed to fetch books");
     }
@@ -106,7 +120,7 @@ const Books = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this book?")) return;
     try {
-      await axios.delete(`http://localhost:8000/api/books/${id}`, {
+      await axios.delete(apiUrl + `/books/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBooks(books.filter((b) => b.id !== id));
@@ -181,7 +195,7 @@ const Books = () => {
                     <td className="px-4 py-3">
                       {book.cover_image ? (
                         <img
-                          src={`http://localhost:8000/storage/${book.cover_image}`}
+                          src={mediaUrl + `/${book.cover_image}`}
                           alt={book.title}
                           className="w-12 h-16 object-cover rounded-md"
                         />
@@ -212,11 +226,11 @@ const Books = () => {
                       {book.total_pages ? (
                         <div>
                           <div className="flex justify-between text-xs text-gray-500 mb-1">
-                            <span>{book.pages_read || 0} / {book.total_pages} pages</span>
+                            <span>{book.current_pages || 0} / {book.total_pages} pages</span>
                             <span>
                               {Math.min(
                                 100,
-                                Math.round(((book.pages_read || 0) / book.total_pages) * 100)
+                                Math.round(((book.current_pages || 0) / book.total_pages) * 100)
                               )}%
                             </span>
                           </div>
@@ -226,7 +240,7 @@ const Books = () => {
                               style={{
                                 width: `${Math.min(
                                   100,
-                                  ((book.pages_read || 0) / book.total_pages) * 100
+                                  ((book.current_pages || 0) / book.total_pages) * 100
                                 )}%`,
                               }}
                             />
@@ -243,7 +257,10 @@ const Books = () => {
 
                         {book.book_url && (
                           <button
-                            onClick={() => setSelectedBook(book)}
+                            onClick={() => {
+                              setSelectedBook(book);
+                              setSelectedProgressId(book.progress_id);
+                            }}
                             className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
                           >
                             Read PDF
@@ -277,9 +294,15 @@ const Books = () => {
       {/* PDF Viewer — rendered OUTSIDE the table, once at page level */}
       {selectedBook && (
         <PDFViewer
-          bookUrl={`http://localhost:8000/${selectedBook.book_url}`}
+          bookUrl={baseUrl + `/${selectedBook.book_url}`}
           bookId={selectedBook.id}
-          onClose={() => setSelectedBook(null)}
+          userId={user?.id}
+          progressId={selectedProgressId}
+          initialPage={selectedBook.current_pages || 1}
+          onClose={() => {
+            setSelectedBook(null);
+            setSelectedProgressId(null);
+          }}
         />
       )}
 
