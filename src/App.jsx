@@ -5,9 +5,10 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 import { AuthProvider } from './context/AuthContext';
-import Login    from './pages/Login';
+import Login from './pages/Login';
 import Register from './pages/Register';
-import Books    from './pages/Books';
+import Books from './pages/Books';
+import Progress from './pages/Progress';
 
 function App() {
     const token = localStorage.getItem('token');
@@ -21,6 +22,10 @@ function App() {
                     <Route
                         path="/books"
                         element={token ? <Books /> : <Navigate to="/login" />}
+                    />
+                    <Route
+                        path="/progress"
+                        element={token ? <Progress /> : <Navigate to="/login" />}
                     />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
