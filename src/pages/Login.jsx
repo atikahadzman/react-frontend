@@ -5,6 +5,7 @@ import Lottie from "lottie-react";
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +19,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/login", {
+      const res = await axios.post(apiUrl + "/login", {
         email,
         password,
       });
