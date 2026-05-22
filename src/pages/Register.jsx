@@ -1,83 +1,170 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [error, setError] = useState("");
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-  const navigate = useNavigate();
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setError("");
+        if (password !== passwordConfirmation) {
+            setError("Passwords do not match");
+            return;
+        }
 
-    if (password !== passwordConfirmation) {
-      setError("Passwords do not match");
-      return;
-    }
+        try {
+            await axios.post(apiUrl + "/register", {
+                name,
+                email,
+                password,
+                password_confirmation: passwordConfirmation,
+            });
 
-    try {
-      await axios.post(apiUrl + "/register", {
-        name,
-        email,
-        password,
-        password_confirmation: passwordConfirmation,
-      });
+            navigate("/login");
+        } catch (err) {
+            setError("Registration failed");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      navigate("/login");
-    } catch (err) {
-      setError("Registration failed");
-    }
-  };
+    return (
+        <div className="min-h-screen flex">
+            {/* form */}
+            <div className="w-full md:w-2/5 bg-white flex items-center justify-center p-8">
+                <div className="w-full max-w-md">
+                    <div className="mb-8 text-center">
+                        <h2 className="text-gray-800">
+                            Create an account
+                        </h2>
+                    </div>
 
-  return (
-    <div className="container">
-      <h2>Register</h2>
+                    {error && (
+                        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-sm text-red-600">{error}</p>
+                        </div>
+                    )}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+                    <form onSubmit={handleRegister} className="space-y-4">
+                        {/* name */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Name
+                                </label>
+                            </div>
 
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+                                <input
+                                    type="text"
+                                    placeholder="John Doe"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                />
+                        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+                        {/* email */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Email
+                                </label>
+                            </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+                                <input
+                                    type="email"
+                                    placeholder="you@email.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                />
+                        </div>
 
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={passwordConfirmation}
-          onChange={(e) => setPasswordConfirmation(e.target.value)}
-          required
-        />
+                        {/* password */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Password
+                                </label>
+                            </div>
 
-        <button type="submit">Register</button>
-      </form>
-    </div>
-  );
+                            <input
+                                type="password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            />
+                        </div>
+
+                        {/* confirm password */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Confirm Password
+                                </label>
+                            </div>
+
+                            <input
+                                type="password"
+                                placeholder="••••••••"
+                                value={passwordConfirmation}
+                                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                                required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                        >
+                            {loading ? "Loading..." : "Register"}
+                        </button>
+                    </form>
+
+                    <div className="flex items-center my-6">
+                        <div className="flex-1 border-t border-gray-200"/>
+                        <span className="px-3 text-xs text-gray-400">or</span>
+                        <div className="flex-1 border-t border-gray-200"/>
+                    </div>
+
+                    <p className="text-center text-sm text-gray-500">
+                        Already have an account?{" "}
+                        <Link
+                            to="/login"
+                            className="text-blue-600 font-medium hover:underline"
+                        >
+                            Login here
+                        </Link>
+                    </p>
+                </div>
+            </div>
+
+            {/* image */}
+            <div className="hidden md:flex md:w-3/5 items-center justify-center p-12">
+                <img
+                    src="/reading.png"
+                    alt="Reading illustration"
+                    className="max-w-full h-auto"
+                />
+            </div>
+        </div>
+    );
 };
 
 export default Register;
