@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Books from './pages/Books';
 import Progress from './pages/Progress';
+import Layout from "./layout/Layout";
 
 function App() {
     const token = localStorage.getItem('token');
@@ -21,11 +22,11 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route
                         path="/books"
-                        element={token ? <Books /> : <Navigate to="/login" />}
+                        element={token ? <Layout><Books /></Layout> : <Navigate to="/login" />}
                     />
                     <Route
                         path="/progress"
-                        element={token ? <Progress /> : <Navigate to="/login" />}
+                        element={token ? <Layout><Progress /></Layout> : <Navigate to="/login" />}
                     />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
