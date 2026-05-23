@@ -36,7 +36,7 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
           // axios argument order is -> axios.put(url, data, config)
           await axios.put(apiUrl + `/progress/${progressId}`,
             {
-              current_pages: currentPage,
+              bookmark: currentPage,
             },
             {
               headers: {
@@ -50,7 +50,7 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
             {
               user_id: user?.id,
               book_id: bookId,
-              current_pages: currentPage,
+              bookmark: currentPage,
             },
             {
               headers: {

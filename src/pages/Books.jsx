@@ -188,11 +188,11 @@ const Books = () => {
                       {book.total_pages ? (
                         <div>
                           <div className="flex justify-between text-xs text-gray-500 mb-1">
-                            <span>{book.current_pages || 0} / {book.total_pages} pages</span>
+                            <span>{book.bookmark || 0} / {book.total_pages} pages</span>
                             <span>
                               {Math.min(
                                 100,
-                                Math.round(((book.current_pages || 0) / book.total_pages) * 100)
+                                Math.round(((book.bookmark || 0) / book.total_pages) * 100)
                               )}%
                             </span>
                           </div>
@@ -202,7 +202,7 @@ const Books = () => {
                               style={{
                                 width: `${Math.min(
                                   100,
-                                  ((book.current_pages || 0) / book.total_pages) * 100
+                                  ((book.bookmark || 0) / book.total_pages) * 100
                                 )}%`,
                               }}
                             />
@@ -253,7 +253,7 @@ const Books = () => {
           bookId={selectedBook.id}
           userId={user?.id}
           progressId={selectedProgressId}
-          initialPage={selectedBook.current_pages || 1}
+          initialPage={selectedBook.bookmark || 1}
           onClose={() => {
             setSelectedBook(null);
             setSelectedProgressId(null);
