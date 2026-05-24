@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PDFViewer from "../pages/PDFViewer";
-import Navbar from "../layout/Navbar";
 import { useAuth } from "../context/AuthContext";
+import { HiPhotograph, HiDocument } from "react-icons/hi";  
 
 const Books = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -37,22 +37,18 @@ const Books = () => {
         try {
             const res = await axios.get(apiUrl + "/progress/by-user", {
                 headers: { Authorization: `Bearer ${token}` },
-                params: { 
-                    user_id: user?.id,
-                },
             });
 
             const mapped = res.data.map((progress) => ({
                 ...progress.book,
                 bookmark: progress.bookmark,
                 progress_id: progress.id,
-                last_read_at: new Date(progress.last_read_at).toLocaleString(
-                    undefined,
-                    {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                    }
-                ),
+                last_read_at: new Date(progress.last_read_at).toLocaleString(undefined, {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                }),
+                cover_image_url: progress.book?.media?.find(m => m.collection_name === 'cover_image')?.original_url ?? null,
+                pdf_url: progress.book?.media?.find(m => m.collection_name === 'book_url')?.original_url ?? null,
             }));
 
             setBooks(mapped);
@@ -173,16 +169,14 @@ const Books = () => {
 
                         {/* cover */}
                         <td className="px-4 py-3">
-                            {book.cover_image ? (
+                            {book.cover_image_url ? (
                                 <img
-                                src={mediaUrl + `/${book.cover_image}`}
-                                alt={book.title}
-                                className="w-12 h-16 object-cover rounded-md"
+                                    src={book.cover_image_url}
+                                    alt={book.title}
+                                    className="w-12 h-16 object-cover rounded-md"
                                 />
                             ) : (
-                                <div className="w-12 h-16 bg-blue-50 rounded-md flex items-center justify-center">
-                                    <span className="text-xl">📘</span>
-                                </div>
+                                <img src="/not-exist.jpg" alt="No cover" className="w-12 h-16 object-cover rounded-md" />
                             )}
                         </td>
 
@@ -234,16 +228,16 @@ const Books = () => {
                         {/* actions */}
                         <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                                {book.book_url && (
-                                <button
-                                    onClick={() => {
-                                        setSelectedBook(book);
-                                        setSelectedProgressId(book.progress_id);
-                                    }}
-                                    className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
-                                >
-                                    Read PDF
-                                </button>
+                                {book.pdf_url && (
+                                    <button
+                                        onClick={() => {
+                                            setSelectedBook(book);
+                                            setSelectedProgressId(book.progress_id);
+                                        }}
+                                        className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
+                                    >
+                                        Read PDF
+                                    </button>
                                 )}
 
                                 <button
@@ -264,7 +258,7 @@ const Books = () => {
         {/* PDF viewer — rendered OUTSIDE the table, once at page level */}
         {selectedBook && (
             <PDFViewer
-                bookUrl={baseUrl + `/${selectedBook.book_url}`}
+                bookUrl={selectedBook.pdf_url}
                 bookId={selectedBook.id}
                 userId={user?.id}
                 progressId={selectedProgressId}
@@ -296,66 +290,68 @@ const Books = () => {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Title <span className="text-red-400">*</span>
+                                Title <span className="text-red-400">*</span>
                             </label>
                             <input
-                            name="title"
-                            value={form.title}
-                            onChange={handleChange}
-                            required
-                            placeholder="Book title"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                name="title"
+                                value={form.title}
+                                onChange={handleChange}
+                                required
+                                placeholder="Book title"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Author <span className="text-red-400">*</span>
+                                Author <span className="text-red-400">*</span>
                             </label>
                             <input
-                            name="author"
-                            value={form.author}
-                            onChange={handleChange}
-                            required
-                            placeholder="Author name"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                name="author"
+                                value={form.author}
+                                onChange={handleChange}
+                                required
+                                placeholder="Author name"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Description
+                                Description
                             </label>
                             <textarea
-                            name="description"
-                            value={form.description}
-                            onChange={handleChange}
-                            rows={3}
-                            placeholder="Short description..."
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                name="description"
+                                value={form.description}
+                                onChange={handleChange}
+                                rows={3}
+                                placeholder="Short description..."
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Total pages
+                                Total pages
                             </label>
                             <input
-                            name="total_pages"
-                            type="number"
-                            value={form.total_pages}
-                            onChange={handleChange}
-                            placeholder="e.g. 320"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                name="total_pages"
+                                type="number"
+                                value={form.total_pages}
+                                onChange={handleChange}
+                                placeholder="e.g. 320"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Cover image
+                                Cover image
                             </label>
                             <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
-                            <span className="text-2xl mb-1">🖼️</span>
+                            <span className="text-2xl mb-1">
+                                <HiPhotograph size={20}/>
+                            </span>
                             <span className="text-xs text-gray-500">
                                 {form.cover_image ? form.cover_image.name : "Click to upload image"}
                             </span>
@@ -371,10 +367,12 @@ const Books = () => {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                            PDF file
+                                PDF file
                             </label>
                             <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
-                            <span className="text-2xl mb-1">📄</span>
+                            <span className="text-2xl mb-1">
+                                <HiDocument size={20}/>
+                            </span>
                             <span className="text-xs text-gray-500">
                                 {form.book_url ? form.book_url.name : "Click to upload PDF"}
                             </span>
@@ -390,16 +388,16 @@ const Books = () => {
 
                         <div className="flex gap-3 pt-2">
                             <button
-                            type="button"
-                            onClick={() => setShowModal(false)}
-                            className="flex-1 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition"
+                                type="button"
+                                onClick={() => setShowModal(false)}
+                                className="flex-1 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition"
                             >
-                            Cancel
+                                Cancel
                             </button>
                             <button
-                            type="submit"
-                            disabled={saving}
-                            className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition"
+                                type="submit"
+                                disabled={saving}
+                                className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition"
                             >
                             {saving ? "Saving..." : "Save book"}
                             </button>
