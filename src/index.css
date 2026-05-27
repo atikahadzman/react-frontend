@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap");
+
+@theme {
+    --font-playfair: "Playfair Display", serif;
+    --font-poppins: "Poppins", sans-serif;
+}
 
 :root {
   --text: #6b6375;
