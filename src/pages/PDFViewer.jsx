@@ -148,6 +148,7 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
                     onClick={(e) => {
                         e.preventDefault();
                         onClose();
+                        window.location.reload();
                     }}
                     className="text-gray-500 hover:text-gray-900 font-medium text-sm flex items-center gap-1 border border-gray-200 px-3 py-1.5 rounded-lg"
                 >
