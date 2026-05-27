@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Books from './pages/Books';
+import Dashboard from './pages/Dashboard';
 import Progress from './pages/Progress';
 import Layout from "./layout/Layout";
 
@@ -20,6 +21,10 @@ function App() {
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route
+                        path="/dashboard"
+                        element={token ? <Layout><Dashboard /></Layout> : <Navigate to="/login" />}
+                    /> 
                     <Route
                         path="/books"
                         element={token ? <Layout><Books /></Layout> : <Navigate to="/login" />}

@@ -7,6 +7,11 @@ import { HiHome, HiBookOpen, HiBookmark, HiCog, HiLogout, HiMenu } from "react-i
 
 const navItems = [
     { 
+        to: "/dashboard", 
+        label: "Dashboard", 
+        icon: <HiHome size={20} /> 
+    },
+    { 
         to: "/books", 
         label: "Books", 
         icon: <HiBookOpen size={20} /> 

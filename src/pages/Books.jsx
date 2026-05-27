@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PDFViewer from "../pages/PDFViewer";
 import { useAuth } from "../context/AuthContext";
-import { HiPhotograph, HiDocument } from "react-icons/hi";  
+import { HiPhotograph, HiDocument } from "react-icons/hi"; 
 
 const Books = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -35,23 +35,10 @@ const Books = () => {
 
     const fetchBooks = async () => {
         try {
-            const res = await axios.get(apiUrl + "/progress/by-user", {
+            const res = await axios.get(apiUrl + "/books", {
                 headers: { Authorization: `Bearer ${token}` },
             });
-
-            const mapped = res.data.map((progress) => ({
-                ...progress.book,
-                bookmark: progress.bookmark,
-                progress_id: progress.id,
-                last_read_at: new Date(progress.last_read_at).toLocaleString(undefined, {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                }),
-                cover_image_url: progress.book?.media?.find(m => m.collection_name === 'cover_image')?.original_url ?? null,
-                pdf_url: progress.book?.media?.find(m => m.collection_name === 'book_url')?.original_url ?? null,
-            }));
-
-            setBooks(mapped);
+            setBooks(res.data);
         } catch {
             setError("Failed to fetch books");
         }
@@ -111,7 +98,6 @@ const Books = () => {
     return (
         <div className="min-h-screen w-full bg-gray-50">
             <div className="w-full px-6 py-8">
-
             {/* header */}
             <div className="flex items-center justify-between mb-6">
                 <div>
@@ -159,7 +145,7 @@ const Books = () => {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Cover</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Title</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide w-64">Progress</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide w-64">Last read at</th>
+                    {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide w-64">Last read at</th> */}
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Actions</th>
                     </tr>
                 </thead>
