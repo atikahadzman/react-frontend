@@ -30,7 +30,7 @@ const Books = () => {
 
     const fetchBooks = async () => {
         try {
-            const res = await axios.get(apiUrl + "/book/books-progress", {
+            const res = await axios.get(`${apiUrl}/book/books-progress/${user?.id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
