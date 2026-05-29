@@ -7,7 +7,7 @@ import './App.css'
 import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Books from './pages/Books';
+import Books from './pages/books';
 import Dashboard from './pages/Dashboard';
 import Progress from './pages/Progress';
 import Layout from "./layout/Layout";

@@ -6,7 +6,6 @@ import { useAuth } from "../context/AuthContext";
 import { HiPhotograph, HiDocument } from "react-icons/hi";
 import Banner from "../layout/Banner";
 import Progress from "../context/ProgressSection";
-import Information from "./Information";
 
 const Dashboard = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -49,10 +48,6 @@ const Dashboard = () => {
                 
                 <div className="flex flex-col gap-6 mt-6 pt-6">
                     <Progress />
-                </div>
-                
-                <div className="flex flex-col gap-6 mt-6 pt-6">
-                    <Information />
                 </div>
             </div>
         </div>
