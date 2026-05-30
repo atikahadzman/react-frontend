@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
 import { HiPlus, HiDocument } from "react-icons/hi";
+import BookForm from "./BookForm";
 
 export default function BookBanner({ books, onClose, onSuccess }) {
+    const [showModal, setShowModal] = useState(false);
+
     return (
         <div className="relative">
             <img src="/books-banner-mobile.png" className="block md:hidden w-full object-cover rounded-2xl" />
@@ -25,6 +28,15 @@ export default function BookBanner({ books, onClose, onSuccess }) {
                     </span>
                     Add more
                 </button>
+
+                {/* modal to update book */}
+                {showModal && (
+                    <BookForm
+                        modalTitle="Add Book"
+                        book={{}}
+                        onClose={() => setShowModal(false)}
+                    />
+                )}
             </div>
         </div>
     );

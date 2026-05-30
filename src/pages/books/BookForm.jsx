@@ -1,55 +1,81 @@
 import axios from "axios";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { HiPhotograph, HiDocument } from "react-icons/hi";
 
-export default function BookForm({ token, apiUrl, onClose, onSuccess }) {
+export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const { user, token } = useAuth();
     const [form, setForm] = useState({
-        title: "",
-        author: "",
-        description: "",
-        total_pages: "",
+        title: book?.title || "",
+        author: book?.author || "",
+        description: book?.description || "",
+        total_pages: book?.total_pages || "",
         cover_image: null,
         book_url: null,
     });
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
 
     const handleChange = (e) => {
-        const { name, value, files } = e.target;
+        const { name, type, files, value } = e.target;
         setForm((prev) => ({
             ...prev,
-            [name]: files ? files[0] : value,
+            [name]: type === "file" ? files?.[0] : value,
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSuccess("");
         setSaving(true);
         setError("");
 
-        try {
-            const data = new FormData();
-            data.append("title", form.title);
-            data.append("author", form.author);
-            data.append("description", form.description);
-            data.append("total_pages", form.total_pages);
-            if (form.cover_image) data.append("cover_image", form.cover_image);
-            if (form.book_url) data.append("book_url", form.book_url);
+        // try {
+            if (!form.book_url) {
+                setError("PDF file is required");
+                setSaving(false);
+                return;
+            }
 
-            await axios.post(apiUrl + "/books", data, {
+            const formData = new FormData();
+            formData.append("title", form.title);
+            formData.append("author", form.author);
+            formData.append("description", form.description);
+            formData.append("total_pages", form.total_pages);
+            if (form.cover_image instanceof File) {
+                formData.append("cover_image", form.cover_image);
+            }
+            if (form.book_url instanceof File) {
+                formData.append("book_url", form.book_url);
+            }
+
+            const isEditing = !!book?.id;
+            const url = isEditing ? `${apiUrl}/books/${book.id}` : `${apiUrl}/books`;
+
+            if (isEditing) {
+                formData.append("_method", "PUT");
+            }
+
+            const res = await axios.post(url, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data",
                 },
             });
 
-            onSuccess(); // refresh book list
-            onClose();  // close modal
-        } catch (err) {
-            setError(err.response?.data?.message || "Failed to add book");
-        } finally {
-            setSaving(false);
-        }
+            if (res.data.status === "success") {
+                onSuccess();
+                onClose();
+            } else {
+                setError(JSON.stringify(res));
+            }
+        // } catch (err) {
+        //     setError(err.response?.data?.message || "Failed to add book");
+        // } finally {
+        //     setSaving(false);
+        // }
     };
 
     return (
@@ -59,7 +85,9 @@ export default function BookForm({ token, apiUrl, onClose, onSuccess }) {
         >
             <div className="bg-white rounded-2xl w-full max-w-md p-6 max-h-screen overflow-y-auto">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-semibold text-gray-900">Add book</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                        {modalTitle}
+                    </h2>
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-gray-600 text-xl leading-none"
@@ -71,6 +99,11 @@ export default function BookForm({ token, apiUrl, onClose, onSuccess }) {
                 {error && (
                     <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
                         <p className="text-sm text-red-600">{error}</p>
+                    </div>
+                )}
+                {success && (
+                    <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm text-green-600">{success}</p>
                     </div>
                 )}
 
@@ -135,27 +168,48 @@ export default function BookForm({ token, apiUrl, onClose, onSuccess }) {
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Cover image
                         </label>
-                        <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
-                            <HiPhotograph size={20} />
-                            <span className="text-xs text-gray-500 mt-1">
-                                {form.cover_image ? form.cover_image.name : "Click to upload image"}
-                            </span>
+                        <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition overflow-hidden">
+                            {form.cover_image instanceof File ? (
+                                // Newly selected file — show local preview
+                                <img
+                                    src={URL.createObjectURL(form.cover_image)}
+                                    alt="Cover preview"
+                                    className="h-24 w-16 object-cover rounded-xl flex-shrink-0"
+                                />
+                            ) : form.cover_image ? (
+                                // Existing image from server — show URL directly
+                                <img
+                                    src={form.cover_image}
+                                    alt="Cover preview"
+                                    className="h-24 w-16 object-cover rounded-xl flex-shrink-0"
+                                />
+                            ) : (
+                                // No image
+                                <>
+                                    <HiPhotograph size={20} />
+                                    <span className="text-xs text-gray-500 mt-1">Click to upload image</span>
+                                </>
+                            )}
                             <input type="file" name="cover_image" accept="image/*" onChange={handleChange} className="hidden" />
                         </label>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            PDF file
-                        </label>
-                        <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
-                            <HiDocument size={20} />
-                            <span className="text-xs text-gray-500 mt-1">
-                                {form.book_url ? form.book_url.name : "Click to upload PDF"}
-                            </span>
-                            <input type="file" name="book_url" accept=".pdf" onChange={handleChange} className="hidden" />
-                        </label>
-                    </div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+        PDF file
+    </label>
+    <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
+        <HiDocument size={20} />
+        <span className="text-xs text-gray-500 mt-1">
+            {form.book_url instanceof File
+                ? form.book_url.name
+                : form.book_url
+                ? "Current file: " + form.book_url.split("/").pop()
+                : "Click to upload PDF"}
+        </span>
+        <input type="file" name="book_url" accept=".pdf" onChange={handleChange} className="hidden" />
+    </label>
+</div>
 
                     <div className="flex gap-3 pt-2">
                         <button
