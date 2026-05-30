@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { HiBookOpen, HiX } from "react-icons/hi"; 
 import PDFViewer from "../PDFViewer";
@@ -68,14 +68,14 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                 <div className="flex flex-row gap-4 p-4">
                                     {/* cover image */}
                                     <div className="shrink-0">
-                                        <a href="/">
+                                        <Link to={`/books/${book.id}`}>
                                             <img
                                                 src={book.cover_image || "/not-exist.jpg"}
                                                 alt={book.title}
                                                 className="h-24 w-16 object-cover rounded-xl flex-shrink-0 hover:translate-y-1"
                                                 loading="lazy"
                                             />
-                                        </a>
+                                        </Link>
                                     </div>
 
                                     {/* book title and author */}
