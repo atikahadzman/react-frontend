@@ -10,6 +10,8 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
         name: user?.name || "",
         email: user?.email || "",
         password: user?.password || "",
+        role_id: user?.role_id || "",
+        status: user?.status || "",
     });
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -46,11 +48,12 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
         setSaving(true);
         setError("");
 
-
         const formData = new FormData();
         formData.append("name", form.name);
         formData.append("email", form.email);
         formData.append("password", form.password);
+        formData.append("role_id", form.role_id);
+        formData.append("status", form.status);
 
         const isEditing = !!user?.id;
         const url = isEditing ? `${apiUrl}/user/${user.id}` : `${apiUrl}/user`;
@@ -68,13 +71,17 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
 
         if (res.data.status === "success") {
             setSuccess(res.data.message);
-            onClose();
         } else {
             setError(JSON.stringify(res));
         }
 
         window.location.reload();
     };
+
+    const statuses = [
+        { id: 1, label: "Active" },
+        { id: 2, label: "Inactive" },
+    ];
 
     return (
         <div
@@ -126,7 +133,7 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
                         </label>
                         <select
                             name="role"
-                            value={form.role}
+                            value={form.role_id}
                             onChange={handleChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                         >
@@ -167,6 +174,25 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
                             placeholder="*************"
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Status <span className="text-red-400">*</span>
+                        </label>
+                        <select
+                            name="status"
+                            value={form.status}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                        >
+                            <option value="">Select status</option>
+                            {statuses.map((status) => (
+                                <option key={status.id} value={status.id}>
+                                    {status.label}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="flex gap-3 pt-2">
