@@ -65,11 +65,13 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
         });
 
         if (res.data.status === "success") {
-            onSuccess();
+            // onSuccess();
             onClose();
         } else {
             setError(JSON.stringify(res));
         }
+
+        window.location.reload();
     };
 
     return (
