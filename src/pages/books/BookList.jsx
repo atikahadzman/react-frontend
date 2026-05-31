@@ -15,6 +15,9 @@ export default function BookList({ books = [], onClose, onSuccess }) {
     const [editBook, setEditBook] = useState(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [search, setSearch] = useState("");
+    const [filterBook, setFilterBook] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,6 +43,35 @@ export default function BookList({ books = [], onClose, onSuccess }) {
         window.location.reload();
     };
 
+    // for filter purpose
+    const getBookStatus = (book) => {
+        if (book.bookmark == null) return "not_started";
+        if (Number(book.bookmark) >= Number(book.total_pages)) return "completed";
+        return "in_progress";
+    };
+
+    const statusLabels = {
+        not_started: "Not Started",
+        in_progress: "In Progress",
+        completed: "Completed",
+    };
+
+    const filteredBook = books.filter((book) => {
+        const matchSearch =
+            book.title.toLowerCase().includes(search.toLowerCase()) ||
+            book.author.toLowerCase().includes(search.toLowerCase());
+
+        const matchBook = filterBook
+            ? Number(book.id) === Number(filterBook)
+            : true;
+
+        const matchStatus = filterStatus
+            ? getBookStatus(book) === filterStatus
+            : true;
+
+        return matchSearch && matchBook && matchStatus;
+    });
+
     return (
         <div className="w-full px-6 py-8">
             {error && (
@@ -53,13 +85,35 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                 </div>
             )}
 
+            <div className="flex gap-3 mb-4">
+                <input
+                    type="text"
+                    placeholder="Search by title or author..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    <option value="">All status</option>
+                    {Object.entries(statusLabels).map(([value, label]) => (
+                        <option key={value} value={value}>
+                            {label}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
             {books.length === 0 ? (
                 <div className="text-center py-24 font-poppins font-semibold text-white">
                     Ops, it's empty here
                 </div>
             ) : (
                 <div className="grid md:grid-cols-1 gap-4 mt-6 pt-6">
-                    {books.map((book) => {
+                    {filteredBook.map((book) => {
                         const isOwner = user?.id === book.added_by;
                         const hasProgress = book.bookmark && book.progress_id && user?.id === book.user_id;
 
