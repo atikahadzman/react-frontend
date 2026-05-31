@@ -11,11 +11,11 @@ export default function BookBanner({ books, onClose, onSuccess }) {
             <img src="/books-banner-mobile.png" className="block md:hidden w-full object-cover rounded-2xl" />
             <img src="/books-banner.png" className="hidden md:block w-full h-50 object-cover rounded-2xl" />
 
-            <div className="absolute inset-0 flex flex-col justify-center items-start text-indigo-900 pl-10">
+            <div className="absolute inset-0 flex flex-col items-start text-indigo-900 pb-20 px-8">
                 <h4 className="text-2xl font-semibold text-gray-900 italic">
                     "A reader lives a thousand lives before he dies."
                 </h4>
-                <p className="font-poppins text-sm text-gray-500">
+                <p className="font-poppins text-sm text-gray-800">
                     — George R.R. Martin
                 </p>
 
