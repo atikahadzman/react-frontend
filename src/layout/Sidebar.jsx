@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 // icons
-import { HiHome, HiBookOpen, HiBookmark, HiCog, HiLogout, HiMenu } from "react-icons/hi";   
+import { HiHome, HiBookOpen, HiBookmark, HiCog, HiLogout, HiMenu, HiUser, HiUserAdd, HiUsers } from "react-icons/hi";   
 
 const navItems = [
     { 
@@ -20,6 +20,11 @@ const navItems = [
         to: "/progress", 
         label: "Reading Progress",  
         icon: <HiBookmark size={20} />
+    },
+    { 
+        to: "/users", 
+        label: "Users",  
+        icon: <HiUsers size={20} />
     },
 ];
 
