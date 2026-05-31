@@ -2,6 +2,12 @@ import axios from "axios";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { HiPhotograph, HiDocument } from "react-icons/hi";
+import { Document, pdfjs } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/build/pdf.worker.min.mjs",
+    import.meta.url,
+).toString();
 
 export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -18,12 +24,25 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const { name, type, files, value } = e.target;
-        setForm((prev) => ({
-            ...prev,
-            [name]: type === "file" ? files?.[0] : value,
-        }));
+
+        if (type === "file") {
+            const file = files?.[0];
+            setForm((prev) => ({ ...prev, [name]: file }));
+
+            if (name === "book_url" && file) {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+                    setForm((prev) => ({ ...prev, total_pages: pdf.numPages }));
+                } catch (err) {
+                    console.error("Failed to read PDF pages", err);
+                }
+            }
+        } else {
+            setForm((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -148,20 +167,6 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Total pages
-                        </label>
-                        <input
-                            name="total_pages"
-                            type="number"
-                            value={form.total_pages}
-                            onChange={handleChange}
-                            placeholder="e.g. 320"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Cover image
                         </label>
                         <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition overflow-hidden">
@@ -191,21 +196,36 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                     </div>
 
                     <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-        PDF file
-    </label>
-    <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
-        <HiDocument size={20} />
-        <span className="text-xs text-gray-500 mt-1">
-            {form.book_url instanceof File
-                ? form.book_url.name
-                : form.book_url
-                ? "Current file: " + form.book_url.split("/").pop()
-                : "Click to upload PDF"}
-        </span>
-        <input type="file" name="book_url" accept=".pdf" onChange={handleChange} className="hidden" />
-    </label>
-</div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            PDF file
+                        </label>
+                        <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
+                            <HiDocument size={20} />
+                            <span className="text-xs text-gray-500 mt-1">
+                                {form.book_url instanceof File
+                                    ? form.book_url.name
+                                    : form.book_url
+                                    ? "Current file: " + form.book_url.split("/").pop()
+                                    : "Click to upload PDF"}
+                            </span>
+                            <input type="file" name="book_url" accept=".pdf" onChange={handleChange} className="hidden" />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Total pages
+                        </label>
+                        <input
+                            name="total_pages"
+                            type="number"
+                            value={form.total_pages}
+                            onChange={handleChange}
+                            placeholder="e.g. 320"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-200 cursor-not-allowed"
+                            readOnly
+                        />
+                    </div>
 
                     <div className="flex gap-3 pt-2">
                         <button
