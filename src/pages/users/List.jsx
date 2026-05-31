@@ -65,6 +65,9 @@ export default function List({ users = [], onClose, onSuccess }) {
                             <th className="px-6 py-3 text-start font-medium uppercase tracking-wider">
                                 Email
                             </th>
+                            <th className="px-6 py-3 text-start font-medium uppercase tracking-wider">
+                                Role
+                            </th>
                             <th className="relative px-6 py-3">
                                 <span className="sr-only">Actions</span>
                             </th>
@@ -78,6 +81,9 @@ export default function List({ users = [], onClose, onSuccess }) {
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4">
                                     {user.email}
+                                </td>
+                                <td className="whitespace-nowrap px-6 py-4">
+                                    {user.role_id === 1 ? "Admin" : "Reader" }
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4 text-right font-medium">
                                     <div className="flex items-center justify-end gap-2">
