@@ -25,9 +25,9 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
             const res = await axios.get(`${apiUrl}/role`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log('----- bvfhvbhjdsfbv ------- ' + JSON.stringify(res));
             setRoles(res.data);
         } catch (err) {
+            setError("Failed to fetch roles");
             console.error("Failed to fetch roles");
         }
     };

@@ -32,50 +32,44 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
         setSaving(true);
         setError("");
 
-        // try {
-            if (!form.book_url) {
-                setError("PDF file is required");
-                setSaving(false);
-                return;
-            }
+        if (!form.book_url) {
+            setError("PDF file is required");
+            setSaving(false);
+            return;
+        }
 
-            const formData = new FormData();
-            formData.append("title", form.title);
-            formData.append("author", form.author);
-            formData.append("description", form.description);
-            formData.append("total_pages", form.total_pages);
-            if (form.cover_image instanceof File) {
-                formData.append("cover_image", form.cover_image);
-            }
-            if (form.book_url instanceof File) {
-                formData.append("book_url", form.book_url);
-            }
+        const formData = new FormData();
+        formData.append("title", form.title);
+        formData.append("author", form.author);
+        formData.append("description", form.description);
+        formData.append("total_pages", form.total_pages);
+        if (form.cover_image instanceof File) {
+            formData.append("cover_image", form.cover_image);
+        }
+        if (form.book_url instanceof File) {
+            formData.append("book_url", form.book_url);
+        }
 
-            const isEditing = !!book?.id;
-            const url = isEditing ? `${apiUrl}/books/${book.id}` : `${apiUrl}/books`;
+        const isEditing = !!book?.id;
+        const url = isEditing ? `${apiUrl}/books/${book.id}` : `${apiUrl}/books`;
 
-            if (isEditing) {
-                formData.append("_method", "PUT");
-            }
+        if (isEditing) {
+            formData.append("_method", "PUT");
+        }
 
-            const res = await axios.post(url, formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+        const res = await axios.post(url, formData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+            },
+        });
 
-            if (res.data.status === "success") {
-                onSuccess();
-                onClose();
-            } else {
-                setError(JSON.stringify(res));
-            }
-        // } catch (err) {
-        //     setError(err.response?.data?.message || "Failed to add book");
-        // } finally {
-        //     setSaving(false);
-        // }
+        if (res.data.status === "success") {
+            onSuccess();
+            onClose();
+        } else {
+            setError(JSON.stringify(res));
+        }
     };
 
     return (
