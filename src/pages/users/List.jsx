@@ -78,6 +78,13 @@ export default function List({ users = [], onClose, onSuccess }) {
                             <tr key={user.id} className="transition-colors hover:bg-gray-100 dark:hover:bg-dark-0 text-sm">
                                 <td className="whitespace-nowrap px-6 py-4">
                                     {user.name}
+                                    <div className={`rounded-md px-2 py-1 text-xs font-semibold whitespace-nowrap ${
+                                        user.status === "1"
+                                            ? "bg-lime-400 text-lime-900"
+                                            : "bg-rose-400 text-rose-900"
+                                        }`}>
+                                        {user.status === "1" ? "Active" : "Inactive"}
+                                    </div>
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4">
                                     {user.email}
