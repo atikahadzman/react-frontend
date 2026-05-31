@@ -17,14 +17,10 @@ const navItems = [
         icon: <HiBookOpen size={20} /> 
     },
     { 
-        to: "/progress", 
-        label: "Reading Progress",  
-        icon: <HiBookmark size={20} />
-    },
-    { 
         to: "/users", 
         label: "Users",  
-        icon: <HiUsers size={20} />
+        icon: <HiUsers size={20} />,
+        adminOnly: true
     },
 ];
 
@@ -46,6 +42,8 @@ export default function Sidebar() {
         localStorage.removeItem("token");
         navigate("/login");
     };
+
+    // console.log(typeof user?.role_id, user?.role_id);
 
     return (
         <aside
@@ -83,21 +81,24 @@ export default function Sidebar() {
 
         {/* nav links */}
         <nav className="flex-1 p-2 space-y-1">
-            {navItems.map(({ to, label, icon }) => (
-                <NavLink
+        {navItems
+            .filter(item => !item.adminOnly || user?.role_id === 1)
+            .map(({ to, label, icon }) => (
+            <NavLink
                 key={to}
                 to={to}
                 className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition
-                    ${isActive
-                    ? "bg-gray-100 text-gray-900 font-medium"
-                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition
+                    ${
+                        isActive
+                        ? "bg-gray-100 text-gray-900 font-medium"
+                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                     }`
                 }
-                >
+            >
                 <span className="shrink-0">{icon}</span>
                 {!collapsed && <span>{label}</span>}
-                </NavLink>
+            </NavLink>
             ))}
         </nav>
 
@@ -105,7 +106,7 @@ export default function Sidebar() {
         <div className="p-2 border-t border-gray-200">
             <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-red-50 hover:text-red-500 transition"
+                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-gray-900 hover:bg-red-50 hover:text-red-500 transition"
             >
             <span className="shrink-0"> <HiLogout size={20} />  </span>
                 {!collapsed && <span>Logout</span>}
