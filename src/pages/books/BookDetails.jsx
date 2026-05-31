@@ -41,7 +41,7 @@ const BookDetails = () => {
 
     return (
         <div className="min-h-screen w-full bg-gray-50">
-            <div class="mx-auto max-w-screen-lg px-3 py-6">
+            <div className="mx-auto max-w-screen-lg px-3 py-6">
 
                 <button
                     onClick={() => navigate(-1)}
@@ -88,7 +88,7 @@ const BookDetails = () => {
                         </p>
 
                         <p className="mt-6 text-lg text-gray-700 pt-6">
-                            <div class="inline-block h-3 border-l-2 border-red-600 mr-2"></div>{books.total_pages} pages
+                            <div className="inline-block h-3 border-l-2 border-red-600 mr-2"></div>{books.total_pages} pages
                         </p>
                     </div>
                 </div>

@@ -166,7 +166,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                         {hasProgress ? (
                                             <div className="flex flex-col gap-2 mt-1">
                                                 {book.bookmark === book.total_pages ? (
-                                                    <div class="rounded-md px-2 py-1 text-xs font-semibold bg-lime-400 text-lime-900">
+                                                    <div className="rounded-md px-2 py-1 text-xs font-semibold bg-lime-400 text-lime-900">
                                                         You finish the book!
                                                     </div>
                                                 ) : (
