@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import PDFViewer from "../pages/PDFViewer";
 import { useAuth } from "./AuthContext";
 
@@ -76,79 +76,89 @@ const ProgressSection = () => {
                         </div>
                     </div>
                 ) : (
-                <div className="grid md:grid-cols-1 gap-4 mt-6 pt-6">
-                    {books.map((book) => (
-                        <div key={book.id} className="flex flex-row gap-4 items-center p-3">
-                            {/* cover image */}
-                            {book.cover_image_url ? (
-                                <img
-                                    src={book.cover_image_url}
-                                    alt={book.title}
-                                    className="h-24 w-16 object-cover rounded-xl flex-shrink-0"
-                                />
-                            ) : (
-                                <img src="/not-exist.jpg" alt="No cover" className="h-24 w-16 object-cover rounded-xl flex-shrink-0" />
-                            )}
+                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                        <table className="w-full text-sm">
+                            <tbody className="divide-y divide-gray-100">
+                                {books.map((book) => {
+                                    const hasProgress = book.bookmark && book.progress_id && user?.id === book.user_id;
+                                    
+                                    return (
+                                        <tr key={book.id} className="hover:bg-gray-50 transition">
+                                            {/* cover */}
+                                            <td className="px-4 py-3">
+                                                {book.cover_image_url && (
+                                                    <Link to={`/books/${book.id}`}>
+                                                        <img
+                                                            src={book.cover_image_url}
+                                                            alt={book.title}
+                                                            className="h-30 w-30 object-cover rounded-xl flex-shrink-0 hover:translate-y-1"
+                                                            loading="lazy"
+                                                        />
+                                                    </Link>
+                                                )}
+                                            </td>
 
-                            {/* book title and author */}
-                            <div className="flex flex-col gap-1">
-                                <div className="font-poppins font-semibold text-black">
-                                    {book.title}
-                                </div>
+                                            {/* title */}
+                                            <td className="px-4 py-3">
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="font-medium text-indigo-900">{book.title}</p>
+                                                        <div className={`w-fit rounded-md px-2 py-1 text-xs font-semibold whitespace-nowrap ${
+                                                            book.bookmark === book.total_pages
+                                                                ? "bg-lime-400 text-lime-900"
+                                                                : hasProgress
+                                                                ? "bg-rose-400 text-rose-900"
+                                                                : "bg-sky-400 text-sky-900"
+                                                        }`}>
+                                                            {book.bookmark === book.total_pages ? "Completed" : hasProgress ? "In progress" : "Not started"}
+                                                        </div>
+                                                    </div>
 
-                                <div className="font-poppins text-sm text-black">
-                                    by {book.author}
-                                </div>
-                            </div>
+                                                    {book.bookmark && (
+                                                        <p className="text-xs text-gray-700 mt-0.5 line-clamp-1">
+                                                            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                                                <span>{book.bookmark || 0} / {book.total_pages} pages</span>
+                                                                <span>
+                                                                    {Math.min(
+                                                                        100,
+                                                                        Math.round(((book.bookmark || 0) / book.total_pages) * 100)
+                                                                    )}%
+                                                                </span>
+                                                            </div>
+                                                            <div className="rounded-md bg-gray-200 overflow-hidden h-6">
+                                                                <div
+                                                                    className="bg-lime-400 h-full rounded-md transition-all"
+                                                                    style={{ width: `${Math.min(100, (book.bookmark / book.total_pages) * 100)}%` }}
+                                                                />
+                                                            </div>
+                                                            {book.last_read_at}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </td>
 
-                            {/* progress bar */}
-                            <div className="flex flex-col gap-1 pl-12"> 
-                                <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                    <span>{book.bookmark || 0} / {book.total_pages} pages</span>
-                                    <span>
-                                        {Math.min(
-                                            100,
-                                            Math.round(((book.bookmark || 0) / book.total_pages) * 100)
-                                        )}%
-                                    </span>
-                                </div>
-
-                                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                                    <div
-                                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                        style={{
-                                            width: `${Math.min(
-                                            100,
-                                            ((book.bookmark || 0) / book.total_pages) * 100
-                                            )}%`,
-                                        }}
-                                    />
-                                </div>
-
-                                <div className="font-poppins text-xs text-gray-700">
-                                    Last read at {book.last_read_at}
-                                </div>
-                            </div>
-
-                            {/* continue button */}
-                            <div className="flex flex-col gap-1 pl-12"> 
-                                <div className="flex items-center gap-2">
-                                    {book.book_url && (
-                                    <button
-                                        onClick={() => {
-                                            setSelectedBook(book);
-                                            setSelectedProgressId(book.progress_id);
-                                        }}
-                                        className="bg-white text-sm text-blue-800 hover:text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium"
-                                    >
-                                        Continue...
-                                    </button>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                                            {/* actions */}
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    {book.book_url && (
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedBook(book);
+                                                            setSelectedProgressId(book.progress_id);
+                                                        }}
+                                                        className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
+                                                    >
+                                                        Continue...
+                                                    </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div> 
 
