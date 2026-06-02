@@ -56,6 +56,7 @@ export default function List({ users = [], onClose, onSuccess }) {
                     Ops, it's empty here
                 </div>
             ) : (
+                <div className="w-full overflow-x-auto rounded-lg">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-400">
                     <thead className="bg-gray-50 dark:bg-dark-0">
                         <tr className="font-poppins text-black text-sm">
@@ -129,6 +130,7 @@ export default function List({ users = [], onClose, onSuccess }) {
                         ))}
                     </tbody>
                 </table>
+                </div>
             )}
         </div>
     );
