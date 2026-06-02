@@ -201,7 +201,8 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                             setSelectedBook(book); 
                                                             setSelectedProgressId(book.progress_id); 
                                                         }}
-                                                        className="w-50 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium"
+                                                        className="w-50 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium
+                                                        hover:bg-blue-400 hover:text-white transition"
                                                     >
                                                         Start Reading
                                                     </button>
@@ -220,7 +221,8 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                             setSelectedBook(book); 
                                                             setSelectedProgressId(book.progress_id);
                                                         }}
-                                                        className="w-24 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium"
+                                                        className="w-24 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 
+                                                        rounded-lg transition font-medium hover:bg-blue-400 hover:text-white transition"
                                                     >
                                                         Reread
                                                     </button>
@@ -231,7 +233,8 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                                 setSelectedBook(book); 
                                                                 setSelectedProgressId(book.progress_id);
                                                             }}
-                                                            className="w-24 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium"
+                                                            className="w-24 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 
+                                                            rounded-lg transition font-medium hover:bg-blue-400 hover:text-white transition"
                                                         >
                                                             Continue
                                                         </button>

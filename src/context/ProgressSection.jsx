@@ -146,7 +146,8 @@ const ProgressSection = () => {
                                                             setSelectedBook(book);
                                                             setSelectedProgressId(book.progress_id);
                                                         }}
-                                                        className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium whitespace-nowrap"
+                                                        className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 
+                                                        rounded-lg transition font-medium whitespace-nowrap hover:bg-blue-400 hover:text-white transition"
                                                     >
                                                         Continue...
                                                     </button>
