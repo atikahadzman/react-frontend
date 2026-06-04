@@ -79,16 +79,32 @@ const BookDetails = () => {
                             {books.title}
                         </h1>
 
-                        <h4 className="font-poppins text-3xl font-bold text-gray-400">
-                            by {books.author}
-                        </h4>
+                        <div className="flex justify-center items-center gap-2">
+                            <h4 className="font-poppins text-3xl font-bold text-gray-400">
+                                by {books.author}
+                            </h4>
+
+                            <div
+                                className={`w-fit rounded-md px-2 py-1 text-sm font-semibold whitespace-nowrap ${
+                                    books.status == 1
+                                        ? "bg-lime-400 text-lime-900"
+                                        : "bg-rose-400 text-rose-900"
+                                }`}
+                            >
+                                {books.status == 1 ? "Enabled" : "Disabled"}
+                            </div>
+                        </div>
 
                         <p className="mt-6 text-xl text-gray-700 pt-6">
                             {books.description}
                         </p>
 
                         <p className="mt-6 text-lg text-gray-700 pt-6">
-                            <div className="inline-block h-3 border-l-2 border-red-600 mr-2"></div>{books.total_pages} pages
+                            Uploaded by <span className="font-bold text-indigo-900">
+                                {books.user?.name}
+                            </span> &nbsp;
+                            <div className="inline-block h-3 border-l-2 border-red-600 mr-2"></div>
+                            {books.total_pages} pages
                         </p>
                     </div>
                 </div>
