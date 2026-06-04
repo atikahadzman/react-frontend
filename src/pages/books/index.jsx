@@ -46,7 +46,7 @@ const Books = () => {
                     cover_image: book.media?.find(m => m.collection_name === 'cover_image')?.original_url ?? null,
                     pdf_url: book.media?.find(m => m.collection_name === 'book_url')?.original_url ?? null,
                 };
-            });
+            }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
             setBooks(mapped);
         } catch {
