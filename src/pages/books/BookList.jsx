@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { HiBookOpen, HiX } from "react-icons/hi"; 
 import PDFViewer from "../PDFViewer";
 import BookForm from "./BookForm";
+import Alert from "./Alert";
 
 export default function BookList({ books = [], onClose, onSuccess }) {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -12,12 +13,14 @@ export default function BookList({ books = [], onClose, onSuccess }) {
     const { user, token } = useAuth();
     const [selectedBook, setSelectedBook] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [editBook, setEditBook] = useState(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [search, setSearch] = useState("");
     const [filterBook, setFilterBook] = useState("");
     const [filterStatus, setFilterStatus] = useState("");
+    const [deleteBookId, setDeleteBookId] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,21 +29,10 @@ export default function BookList({ books = [], onClose, onSuccess }) {
         }
     }, []);
 
-    const handleDelete = async (id) => {
+    const handleDeleteClick = (id) => {
         setError("");
         setSuccess("");
-        if (!confirm("Are you sure you want to delete this book?")) return;
-
-        const res = await axios.delete(apiUrl + "/books/" + id, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.data.status == 'success') {
-            setSuccess(res.data.message);
-        } else {
-            setError(res.data.message);
-        }
-        window.location.reload();
+        setShowDeleteModal(true);
     };
 
     // for filter purpose
@@ -272,11 +264,22 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                     )}
 
                                                     <button
-                                                        onClick={() => handleDelete(book.id)}
+                                                        onClick={() => {
+                                                            handleDeleteClick(book.id);
+                                                            setDeleteBookId(book.id);
+                                                        }}
                                                         className="bg-red-600 text-sm text-white hover:bg-red-700 px-3 py-1.5 rounded-lg transition font-medium"
                                                     >
                                                         Delete
                                                     </button>
+
+                                                    {showDeleteModal && (
+                                                        <Alert
+                                                            modalTitle="Are you sure you want to delete this book?"
+                                                            id={deleteBookId}
+                                                            onClose={() => setShowDeleteModal(false)}
+                                                        />
+                                                    )}
                                                 </>
                                             )}
                                         </div>
