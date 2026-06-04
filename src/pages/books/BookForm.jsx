@@ -19,6 +19,7 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
         total_pages: book?.total_pages || "",
         cover_image: null,
         book_url: null,
+        status: "",
     });
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -62,6 +63,8 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
         formData.append("author", form.author);
         formData.append("description", form.description);
         formData.append("total_pages", form.total_pages);
+        formData.append("status", form.status);
+
         if (form.cover_image instanceof File) {
             formData.append("cover_image", form.cover_image);
         }
@@ -82,6 +85,7 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                 "Content-Type": "multipart/form-data",
             },
         });
+        console.log('===== res ===== ' + +JSON.stringify(res));
 
         if (res.data.status === "success") {
             // onSuccess();
@@ -92,6 +96,11 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
 
         window.location.reload();
     };
+
+    const statuses = [
+        { id: 1, label: "Enable" },
+        { id: 2, label: "Disable" },
+    ];
 
     return (
         <div
@@ -163,6 +172,25 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                             placeholder="Short description..."
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Status <span className="text-red-400">*</span>
+                        </label>
+                        <select
+                            name="status"
+                            value={form.status}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">Select status</option>
+                            {statuses.map((status) => (
+                                <option key={status.id} value={status.id}>
+                                    {status.label}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div>
