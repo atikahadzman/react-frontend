@@ -2,10 +2,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { HiBookOpen, HiX } from "react-icons/hi"; 
+import { HiBookOpen, HiX, HiStar, HiOutlineStar } from "react-icons/hi"; 
 import PDFViewer from "../PDFViewer";
 import BookForm from "./BookForm";
 import Alert from "./Alert";
+import Rates from "../rates/Form";
 
 export default function BookList({ books = [], onClose, onSuccess }) {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -21,13 +22,32 @@ export default function BookList({ books = [], onClose, onSuccess }) {
     const [filterBook, setFilterBook] = useState("");
     const [filterStatus, setFilterStatus] = useState("");
     const [deleteBookId, setDeleteBookId] = useState("");
+    const [showRating, setShowRating] = useState(false);
+    const [rates, setRates] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) { 
-            navigate("/login"); return; 
+    if (books.length > 0) {
+            books
+                .filter((book) => book.bookmark === book.total_pages)
+                .forEach((book) => fetchRates(book.id));
         }
-    }, []);
+    }, [books]);
+
+    // store rate per book
+    const fetchRates = async (id) => {
+        try {
+            const res = await axios.get(`${apiUrl}/rate/by-book-id/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setRates((prev) => ({ ...prev, [id]: res.data }));
+        } catch (err) {
+            if (err.response?.status !== 404) {
+                setError("Failed to fetch rates");
+            }
+            setRates((prev) => ({ ...prev, [id]: null }));
+        }
+    };
 
     const handleDeleteClick = (id) => {
         setError("");
@@ -166,10 +186,54 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                             {hasProgress ? (
                                                 <div className="flex flex-col gap-2 mt-1">
                                                     {book.bookmark === book.total_pages ? (
-                                                        <div className="rounded-md px-2 py-1 text-xs font-semibold bg-lime-400 text-lime-900">
-                                                            You finish the book!
-                                                        </div>
-                                                    ) : (
+                                                        <>
+                                                            <div className="rounded-md px-2 py-1 text-xs font-semibold bg-lime-400 text-lime-900">
+                                                                You finish the book!
+                                                            </div>
+
+                                                            {/* has rating — show stars */}
+                                                            {rates[book.id] ? (
+                                                                <div className="flex items-center gap-1">
+                                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                                        <span key={star}>
+                                                                            {star <= rates[book.id].rating ? (
+                                                                                <HiStar size={20} className="text-yellow-400" />
+                                                                            ) : (
+                                                                                <HiOutlineStar size={20} className="text-gray-300" />
+                                                                            )}
+                                                                        </span>
+                                                                    ))}
+                                                                    <span className="text-xs text-gray-500 ml-1">
+                                                                        {rates[book.id].rating} / 5
+                                                                    </span>
+                                                                    <button
+                                                                        onClick={() => setShowRating(true)}
+                                                                        className="ml-2 text-xs text-blue-600 hover:underline"
+                                                                    >
+                                                                        Edit
+                                                                    </button>
+                                                                </div>
+                                                                ) : (
+                                                                    <button
+                                                                        onClick={() => setShowRating(true)}
+                                                                        className="flex items-center gap-2 hover:bg-gray-100 text-gray-700 text-sm font-medium transition"
+                                                                    >
+                                                                        <span className="text-lg leading-none">
+                                                                            <HiOutlineStar size={20} />
+                                                                        </span>
+                                                                        Rate this book!
+                                                                    </button>
+                                                                )}
+
+                                                            {showRating && (
+                                                                <Rates
+                                                                    rates={rates[book.id]}
+                                                                    id={book.id}
+                                                                    onClose={() => setShowRating(false)}
+                                                                />
+                                                            )}
+                                                        </>
+                                                        ) : (
                                                         <>
                                                             <div className="flex justify-between text-xs text-gray-700 mb-1">
                                                                 <span>
