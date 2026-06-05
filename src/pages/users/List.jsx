@@ -15,12 +15,6 @@ export default function List({ users = [], onClose, onSuccess }) {
     const [success, setSuccess] = useState("");
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!token) { 
-            navigate("/login"); return; 
-        }
-    }, []);
-
     const handleDelete = async (id) => {
         setError("");
         setSuccess("");

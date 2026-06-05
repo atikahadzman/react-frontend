@@ -29,7 +29,6 @@ const Progress = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) { navigate("/login"); return; }
         fetchBooks();
     }, []);
 

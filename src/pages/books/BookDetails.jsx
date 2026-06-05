@@ -17,9 +17,6 @@ const BookDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) { 
-            navigate("/login"); return; 
-        }
         fetchBooks();
         fetchRates();
     }, []);
