@@ -115,7 +115,7 @@ const ProgressSection = () => {
                                                     </div>
 
                                                     {book.bookmark && (
-                                                        <p className="text-xs text-gray-700 mt-0.5 line-clamp-1">
+                                                        <div className="text-xs text-gray-700 mt-0.5 line-clamp-1">
                                                             <div className="flex justify-between text-xs text-gray-500 mb-1">
                                                                 <span>{book.bookmark || 0} / {book.total_pages} pages</span>
                                                                 <span>
@@ -132,7 +132,7 @@ const ProgressSection = () => {
                                                                 />
                                                             </div>
                                                             {book.last_read_at}
-                                                        </p>
+                                                        </div>
                                                     )}
                                                 </div>
                                             </td>
