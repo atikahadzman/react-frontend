@@ -37,7 +37,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
     // store rate per book
     const fetchRates = async (id) => {
         try {
-            const res = await axios.get(`${apiUrl}/rate/by-book-id/${id}`, {
+            const res = await axios.get(`${apiUrl}/rate/by-user/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setRates((prev) => ({ ...prev, [id]: res.data }));
@@ -213,17 +213,17 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                                         Edit
                                                                     </button>
                                                                 </div>
-                                                                ) : (
-                                                                    <button
-                                                                        onClick={() => setShowRating(true)}
-                                                                        className="flex items-center gap-2 hover:bg-gray-100 text-gray-700 text-sm font-medium transition"
-                                                                    >
-                                                                        <span className="text-lg leading-none">
-                                                                            <HiOutlineStar size={20} />
-                                                                        </span>
-                                                                        Rate this book!
-                                                                    </button>
-                                                                )}
+                                                            ) : (
+                                                                <button
+                                                                    onClick={() => setShowRating(true)}
+                                                                    className="flex items-center gap-2 hover:bg-gray-100 text-gray-700 text-sm font-medium transition"
+                                                                >
+                                                                    <span className="text-lg leading-none">
+                                                                        <HiOutlineStar size={20} />
+                                                                    </span>
+                                                                    Rate this book!
+                                                                </button>
+                                                            )}
 
                                                             {showRating && (
                                                                 <Rates

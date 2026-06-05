@@ -2,8 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { HiArrowLeft } from "react-icons/hi"; 
-import PDFViewer from "../PDFViewer";
+import { HiArrowLeft, HiStar, HiOutlineStar } from "react-icons/hi"; 
+import List from "../rates/List";
 
 const BookDetails = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -12,6 +12,8 @@ const BookDetails = () => {
     const { user, token } = useAuth();
     const [books, setBooks] = useState([]);
     const [error, setError] = useState("");
+    const [showRating, setShowRating] = useState(false);
+    const [rates, setRates] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,6 +21,7 @@ const BookDetails = () => {
             navigate("/login"); return; 
         }
         fetchBooks();
+        fetchRates();
     }, []);
 
     const fetchBooks = async () => {
@@ -36,6 +39,21 @@ const BookDetails = () => {
             });
         } catch (err) {
             setError("Failed to load book");
+        }
+    };
+
+    // get rating by current user
+    const fetchRates = async () => {
+        try {
+            const res = await axios.get(apiUrl + "/rate/by-user/" + id, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setRates((prev) => ({ ...prev, [id]: res.data }));
+        } catch (err) {
+            if (err.response?.status !== 404) {
+                setError("Failed to fetch rates");
+            }
+            setRates((prev) => ({ ...prev, [id]: null }));
         }
     };
 
@@ -99,14 +117,58 @@ const BookDetails = () => {
                             {books.description}
                         </p>
 
-                        <p className="mt-6 text-lg text-gray-700 pt-6">
+                        <div className="mt-6 text-lg text-gray-700 pt-6">
                             Uploaded by <span className="font-bold text-indigo-900">
                                 {books.user?.name}
                             </span> &nbsp;
                             <div className="inline-block h-3 border-l-2 border-red-600 mr-2"></div>
                             {books.total_pages} pages
-                        </p>
+                        </div>
                     </div>
+                </div>
+
+                <div className="flex flex-col items-center md:flex-row md:justify-between md:gap-x-24">
+                    <div>
+                        {rates[id] ? (
+                            <div className="flex justify-center items-center gap-1">
+                                <span className="text-gray-700">Rated by you</span>
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <span key={star}>
+                                        {star <= rates[id].rating ? (
+                                            <HiStar size={20} className="text-yellow-400" />
+                                        ) : (
+                                            <HiOutlineStar size={20} className="text-gray-300" />
+                                        )}
+                                    </span>
+                                ))}
+                                <span className="text-xs text-gray-500 ml-1">
+                                    {rates[id].rating} / 5
+                                </span>
+                                <button
+                                    onClick={() => setShowRating(true)}
+                                    className="ml-2 text-xs text-blue-600 hover:underline"
+                                >
+                                    Edit
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setShowRating(true)}
+                                className="flex items-center gap-2 hover:bg-gray-100 text-gray-700 text-sm font-medium transition"
+                            >
+                                <span className="text-lg leading-none">
+                                    <HiOutlineStar size={20} />
+                                </span>
+                                Rate this book!
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex flex-col items-center md:flex-row md:gap-x-24">
+                    <List 
+                        book_id={id} 
+                    />
                 </div>
             </div>
         </div>
