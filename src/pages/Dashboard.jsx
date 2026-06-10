@@ -13,6 +13,7 @@ const Dashboard = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const { user, token } = useAuth();
     const [books, setBooks] = useState([]);
+    const [error, setError] = useState("");
     const [form, setForm] = useState({
         title: "",
         author: "",
