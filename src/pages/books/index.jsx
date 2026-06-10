@@ -34,7 +34,7 @@ const Books = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            const mapped = res.data.map((book) => {
+            const mapped = res.data.data.map((book) => {
                 return {
                     ...book,
                     last_read_at: book.last_read_at

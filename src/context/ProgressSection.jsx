@@ -38,7 +38,7 @@ const ProgressSection = () => {
                 },
             });
 
-            const mapped = res.data.map((progress) => ({
+            const mapped = res.data.data.map((progress) => ({
                 ...progress.book,
                 bookmark: progress.bookmark,
                 progress_id: progress.id,
