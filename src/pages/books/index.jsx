@@ -22,11 +22,12 @@ const Books = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) { 
-            navigate("/login"); return; 
+        if (!token) {
+            navigate("/login");
+        } else {
+            fetchBooks();
         }
-        fetchBooks();
-    }, []);
+    }, [token]);
 
     const fetchBooks = async () => {
         try {

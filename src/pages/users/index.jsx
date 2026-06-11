@@ -21,11 +21,12 @@ const Users = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) { 
-            navigate("/login"); return; 
+        if (!token) {
+            navigate("/login");
+        } else {
+            fetchUsers();
         }
-        fetchUsers();
-    }, []);
+    }, [token]);
 
     const fetchUsers = async () => {
         try {
