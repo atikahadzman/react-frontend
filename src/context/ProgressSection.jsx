@@ -42,6 +42,7 @@ const ProgressSection = () => {
                 ...progress.book,
                 bookmark: progress.bookmark,
                 progress_id: progress.id,
+                user_id: progress.user_id,
                 last_read_at: new Date(progress.last_read_at).toLocaleString(undefined, {
                     dateStyle: "medium",
                     timeStyle: "short",
