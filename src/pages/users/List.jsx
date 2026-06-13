@@ -50,81 +50,69 @@ export default function List({ users = [], onClose, onSuccess }) {
                     Ops, it's empty here
                 </div>
             ) : (
-                <div className="w-full overflow-x-auto rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-400">
-                    <thead className="bg-gray-50 dark:bg-dark-0">
-                        <tr className="font-poppins text-black text-sm">
-                            <th className="px-6 py-3 text-start font-medium uppercase tracking-wider">
-                                Name
-                            </th>
-                            <th className="px-6 py-3 text-start font-medium uppercase tracking-wider">
-                                Email
-                            </th>
-                            <th className="px-6 py-3 text-start font-medium uppercase tracking-wider">
-                                Role
-                            </th>
-                            <th className="relative px-6 py-3">
-                                <span className="sr-only">Actions</span>
-                            </th>
+                <table className="w-full min-w-max table-auto text-left">
+                    <thead className="border-b border-slate-300 bg-slate-50/75 text-sm font-semibold text-slate-700">
+                        <tr>
+                            <th className="p-4">Name</th>
+                            <th className="p-4">Email Address</th>
+                            <th className="p-4">Role</th>
+                            <th className="p-4">Status</th>
+                            <th className="p-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-400 font-poppins text-black">
+
+                    <tbody className="divide-y divide-slate-100 text-sm text-slate-600">
                         {users.map((user) => (
-                            <tr key={user.id} className="transition-colors hover:bg-gray-100 dark:hover:bg-dark-0 text-sm">
-                                <td className="whitespace-nowrap px-6 py-4">
-                                    {user.name}
-                                    <div className={`rounded-md px-2 py-1 text-xs font-semibold whitespace-nowrap ${
-                                        user.status === 1
-                                            ? "bg-lime-400 text-lime-900"
-                                            : "bg-rose-400 text-rose-900"
-                                        }`}>
-                                        {user.status === 1 ? "Active" : "Inactive"}
-                                    </div>
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4">
-                                    {user.email}
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4">
-                                    {user.role_id === 1 ? "Admin" : "Reader" }
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-right font-medium">
-                                    <div className="flex items-center justify-end gap-2">
-                                        <button
-                                            onClick={() => { 
-                                                setEditUser(user); 
-                                                setShowModal(true); 
+                        <tr key={user.id} className="transition-colors hover:bg-slate-50/50 text-black">
+                            <td className="p-4 font-medium text-slate-900">{user.name}</td>
+                            <td className="p-4">{user.email}</td>
+                            <td className="p-4">{user.role_id === 1 ? "Admin" : "Reader"}</td>
+                            <td className="p-4">
+                                <span className={`w-fit rounded-md px-2 py-1 text-xs font-semibold ${
+                                    user.status === 1
+                                        ? "bg-lime-400 text-lime-900"
+                                        : "bg-rose-400 text-rose-900"
+                                    }`}>
+                                    {user.status === 1 ? "Active" : "Inactive"}
+                                </span>
+                            </td>
+                            <td className="p-4 text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                    <button
+                                        onClick={() => { 
+                                            setEditUser(user); 
+                                            setShowModal(true); 
+                                        }}
+                                        className="font-medium text-sm text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg transition"
+                                    >
+                                        Update
+                                    </button>
+
+                                    {showModal && editUser?.id === user.id && (
+                                        <Form
+                                            modalTitle="Update User"
+                                            user={editUser}
+                                            onClose={() => { 
+                                                setShowModal(false); 
+                                                setEditUser(null); 
                                             }}
-                                            className="bg-blue-600 text-white hover:bg-blue-700 px-3 py-1.5 rounded-lg transition font-medium"
-                                        >
-                                            Update
-                                        </button>
+                                        />
+                                    )}
 
-                                        {showModal && editUser?.id === user.id && (
-                                            <Form
-                                                modalTitle="Update User"
-                                                user={editUser}
-                                                onClose={() => { 
-                                                    setShowModal(false); 
-                                                    setEditUser(null); 
-                                                }}
-                                            />
-                                        )}
-
-                                        <button
-                                            onClick={() => 
-                                                handleDelete(user.id)
-                                            }
-                                            className="bg-red-600 text-white hover:bg-red-700 px-3 py-1.5 rounded-lg transition font-medium"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                                    <button
+                                        onClick={() => 
+                                            handleDelete(user.id)
+                                        }
+                                        className="font-medium text-sm text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded-lg transition"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                         ))}
                     </tbody>
                 </table>
-                </div>
             )}
         </div>
     );
