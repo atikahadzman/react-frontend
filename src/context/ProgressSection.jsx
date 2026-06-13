@@ -78,6 +78,7 @@ const ProgressSection = () => {
                         <div className="bg-white rounded-xl flex flex-col gap-6 overflow-hidden">
                             {books.map((book) => {
                                 const hasProgress = book.bookmark && book.progress_id && user?.id === book.user_id;
+                                const btnLabel = book.bookmark === book.total_pages ? "Reread" : "Continue...";
                                 
                                 return (
                                     <div
@@ -163,7 +164,7 @@ const ProgressSection = () => {
                                                                 className="text-md text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 
                                                                 rounded-lg transition font-medium whitespace-nowrap hover:bg-blue-400 hover:text-white transition"
                                                             >
-                                                                Continue...
+                                                                {btnLabel}
                                                             </button>
                                                         )}
                                                     </div>
@@ -178,14 +179,14 @@ const ProgressSection = () => {
                 )}
             </div> 
 
-             {/* PDF viewer — rendered outside div */}
+            {/* PDF viewer — rendered outside div */}
             {selectedBook && (
                 <PDFViewer
                     bookUrl={selectedBook.pdf_url}
                     bookId={selectedBook.id}
                     userId={user?.id}
                     progressId={selectedProgressId}
-                    initialPage={selectedBook.bookmark || 1}
+                    initialPage={selectedBook.bookmark === selectedBook.total_pages ? 1 : selectedBook.bookmark}
                     onClose={() => {
                         setSelectedBook(null);
                         setSelectedProgressId(null);

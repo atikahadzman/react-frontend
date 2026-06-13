@@ -128,6 +128,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                     {filteredBook.map((book) => {
                         const isOwner = user?.id === book.added_by;
                         const hasProgress = book.bookmark && book.progress_id && user?.id === book.user_id;
+                        const btnLabel = book.bookmark === book.total_pages ? "Reread" : "Continue...";
 
                         return (
                             <div className="flex flex-col rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-4">
@@ -297,7 +298,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                                 }}
                                                                 className="w-24 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium"
                                                             >
-                                                                Continue
+                                                                {btnLabel}
                                                             </button>
                                                         </>
                                                     )}
@@ -362,7 +363,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                     bookId={selectedBook.id}
                     userId={user?.id}
                     progressId={selectedProgressId}
-                    initialPage={selectedBook.bookmark || 1}
+                    initialPage={selectedBook.bookmark === selectedBook.total_pages ? 1 : selectedBook.bookmark}
                     onClose={() => { setSelectedBook(null); setSelectedProgressId(null); }}
                 />
             )}
