@@ -26,8 +26,6 @@ const Login = () => {
             });
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
-            console.log('====== RES token ====== ' + JSON.stringify(res.data.token));
-            console.log('====== RES user ====== ' + JSON.stringify(res.data.user));
             navigate("/dashboard");
         } catch (err) {
             setError("Invalid email or password. Please try again.");
