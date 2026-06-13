@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Books from './pages/books';
 import Users from './pages/users';
+import Roles from './pages/roles';
 import BookDetails from './pages/books/BookDetails';
 import Dashboard from './pages/Dashboard';
 import Progress from './pages/Progress';
@@ -39,6 +40,10 @@ function App() {
                     <Route
                         path="/users"
                         element={token ? <Layout><Users /></Layout> : <Navigate to="/users" />}
+                    />
+                    <Route
+                        path="/roles"
+                        element={token ? <Layout><Roles /></Layout> : <Navigate to="/roles" />}
                     />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>

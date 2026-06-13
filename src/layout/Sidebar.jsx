@@ -22,6 +22,12 @@ const navItems = [
         icon: <HiUsers size={20} />,
         adminOnly: true
     },
+    { 
+        to: "/roles", 
+        label: "Roles",  
+        icon: <HiCog size={20} />,
+        adminOnly: true
+    },
 ];
 
 export default function Sidebar() {
