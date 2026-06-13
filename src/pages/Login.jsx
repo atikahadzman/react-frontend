@@ -26,6 +26,8 @@ const Login = () => {
             });
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
+            console.log('====== RES token ====== ' + JSON.stringify(res.data.token));
+            console.log('====== RES user ====== ' + JSON.stringify(res.data.user));
             navigate("/dashboard");
         } catch (err) {
             setError("Invalid email or password. Please try again.");
@@ -66,7 +68,7 @@ const Login = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800"
                                 />
                         </div>
 
@@ -95,7 +97,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-gray-800 rounded-lg"
                         >
                             {loading ? "Signing in..." : "Sign in"}
                         </button>
