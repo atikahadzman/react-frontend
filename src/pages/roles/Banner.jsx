@@ -8,15 +8,15 @@ export default function BookBanner({ roles, onClose, onSuccess }) {
 
     return (
         <div className="relative">
-            <img src="/users-banner-mobile.png" className="block md:hidden w-full object-cover rounded-2xl" />
-            <img src="/users-banner.png" className="hidden md:block w-full h-50 object-cover rounded-2xl" />
+            <img src="/roles-banner-mobile.png" className="block md:hidden w-full object-cover rounded-2xl" />
+            <img src="/roles-banner.png" className="hidden md:block w-full h-50 object-cover rounded-2xl" />
 
             <div className="absolute inset-0 flex flex-col items-start text-indigo-900 pb-20 px-8">
                 <h4 className="text-2xl font-semibold text-gray-900 italic">
-                    "Not all those who wander are lost."
+                    "One must be a wise reader to quote wisely and well."
                 </h4>
                 <p className="font-poppins text-sm text-gray-800">
-                    — J.R.R. Tolkien
+                    — A.A. Milne
                 </p>
 
                 <button
