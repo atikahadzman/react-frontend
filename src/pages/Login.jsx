@@ -24,8 +24,27 @@ const Login = () => {
                 email,
                 password,
             });
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
+            const token = res.data?.token;
+            const user = res.data.user;
+            console.log('---- check login ------ ' + JSON.stringify(res))
+            console.log('---- check user ------ ' + JSON.stringify(user))
+            if (!token) {
+                setError("Login error: Token not found " + + JSON.stringify(res));
+                return;
+            }
+
+            if (email != user.email) {
+                console.log('---- PASS ------ ');
+                setError("Login error: Wrong email " + + JSON.stringify(res));
+                return;
+            }
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+            const sessionToken = localStorage.getItem("token");
+            const sessionUser = localStorage.getItem("user");
+            console.log('---- check TOKEN ------ ' + JSON.stringify(sessionToken))
+            console.log('---- check USER ------ ' + JSON.stringify(sessionUser))
+
             navigate("/dashboard");
         } catch (err) {
             setError("Invalid email or password. Please try again.");
