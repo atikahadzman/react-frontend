@@ -27,7 +27,7 @@ const BookDetails = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            const book = res.data;
+            const book = res.data.data;
 
             setBooks({
                 ...book,
