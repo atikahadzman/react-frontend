@@ -34,7 +34,7 @@ const ProgressSection = () => {
             const res = await axios.get(apiUrl + "/progress/by-user", {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { 
-                user_id: user?.id,
+                    user_id: user?.id,
                 },
             });
 
