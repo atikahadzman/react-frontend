@@ -5,7 +5,8 @@ import axios from "axios";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { useAuth } from "../context/AuthContext";
-import { HiChevronLeft, HiChevronRight, HiMinus, HiPlus, HiOutlinePencil, HiBookmark, HiMenu } from "react-icons/hi";   
+import { HiChevronLeft, HiChevronRight, HiMinus, HiPlus, HiOutlinePencil, HiBookmark, HiMenu,  HiMoon, HiSun } from "react-icons/hi";   
+import "../../styles/pdf-viewer.css";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -15,6 +16,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, initialPage = 1, onClose }) => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const { user, token } = useAuth();
+    const [darkMode, setDarkMode] = useState(true);
     const [numPages, setNumPages] = useState(null);
     const [currentPage, setCurrentPage] = useState(initialPage);
     const [scale, setScale] = useState(1.2);
@@ -28,7 +30,18 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
     const [progressId, setProgressId] = useState(initialProgressId ?? null);
     const proxyUrl = bookUrl?.replace(/^https?:\/\/localhost:\d+/, '');
 
-  // save bookmark
+    useEffect(() => {
+        localStorage.setItem("pdfDarkMode", darkMode);
+    }, [darkMode]);
+
+    useEffect(() => {
+        const saved = localStorage.getItem("pdfDarkMode");
+        if (saved !== null) {
+            setDarkMode(saved === "true");
+        }
+    }, []);
+
+    // save bookmark
     useEffect(() => {
         if (!currentPage || !bookId) return;
 
@@ -141,8 +154,12 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
     const pageHighlights = highlights.filter((h) => h.page === currentPage);
 
     return (
-        <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col">
-            <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-3 flex-wrap">
+        <div className={`fixed inset-0 z-50 flex flex-col ${darkMode ? "bg-gray-900" : "bg-gray-100"}`}>
+            <div className={`border-b px-4 py-2 flex items-center gap-3 flex-wrap ${
+                darkMode
+                    ? "bg-gray-800 border-gray-700 text-white"
+                    : "bg-white border-gray-200"
+            }`}>
                 {/* close button */}
                 <button
                     onClick={(e) => {
@@ -263,6 +280,14 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
                             {bookmarks.length + highlights.length}
                         </span>
                     )}
+
+                    <button
+                        onClick={() => setDarkMode(!darkMode)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50"
+                    >
+                        {darkMode ? <HiSun size={20} /> : <HiMoon size={20} />}
+                        {darkMode ? "Light" : "Dark"}
+                    </button>
                 </button>
             </div>
 
@@ -277,7 +302,9 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
                 {/* PDF canvas */}
                 <div
                     ref={containerRef}
-                    className="flex-1 overflow-auto bg-gray-800 flex flex-col items-center py-6 px-4"
+                    className={`flex-1 overflow-auto flex flex-col items-center py-6 px-4 ${
+                        darkMode ? "bg-gray-900" : "bg-gray-100"
+                    }`}
                     onMouseUp={handleTextSelection}
                 >
                     {loading && (
@@ -293,13 +320,15 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
                             onLoadError={(err) => console.error(err)}
                             loading=""
                         >
-                            <Page
-                                pageNumber={currentPage}
-                                scale={scale}
-                                renderTextLayer={true}
-                                renderAnnotationLayer={true}
-                                className="shadow-2xl"
-                            />
+                            <div className={darkMode ? "pdf-dark" : ""}>
+                                <Page
+                                    pageNumber={currentPage}
+                                    scale={scale}
+                                    renderTextLayer={true}
+                                    renderAnnotationLayer={true}
+                                    className="shadow-2xl"
+                                />
+                            </div>
                         </Document>
 
                         {/* current page highlights list */}
@@ -332,7 +361,13 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
 
                 {/* sidebar — bookmarks and highlights */}
                 {showBookmarks && (
-                    <div className="w-72 bg-white border-l border-gray-200 flex flex-col overflow-hidden">
+                    <div
+                        className={`w-72 border-l ${
+                            darkMode
+                                ? "bg-gray-800 border-gray-700 text-white"
+                                : "bg-white border-gray-200"
+                        }`}
+                    >
 
                     <div className="px-4 py-3 border-b border-gray-200">
                         <h3 className="font-medium text-gray-900 text-sm">
