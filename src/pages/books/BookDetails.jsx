@@ -10,24 +10,30 @@ const BookDetails = () => {
     const { id } = useParams();
     const location = useLocation();
     const { user, token } = useAuth();
-    const [books, setBooks] = useState([]);
+    // const [books, setBooks] = useState([]);
+    const [books, setBooks] = useState({});
     const [error, setError] = useState("");
     const [showRating, setShowRating] = useState(false);
     const [rates, setRates] = useState({});
     const navigate = useNavigate();
+    // console.log('BOOK token: ' + JSON.stringify(token));
+    console.log('BOOK id: ' + JSON.stringify(id));
 
     useEffect(() => {
-        fetchBooks();
-        fetchRates();
-    }, []);
+        console.log("BOOK STATE UPDATED:", books);
+        console.log("TYPE:", typeof books);
+        console.log("KEYS:", Object.keys(books));
+    }, [books]);
 
     const fetchBooks = async () => {
         try {
             const res = await axios.get(apiUrl + "/books/" + id, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-
+            
             const book = res.data.data;
+console.log("BOOKS:", JSON.stringify(book));
+console.log("BOOK length:", book.length);
 
             setBooks({
                 ...book,
@@ -38,7 +44,7 @@ const BookDetails = () => {
             setError("Failed to load book");
         }
     };
-
+console.log('BOOK HEREE: ' + JSON.stringify(books));
     // get rating by current user
     const fetchRates = async () => {
         try {
@@ -83,20 +89,20 @@ const BookDetails = () => {
                 <div className="flex flex-col items-center md:flex-row md:justify-between md:gap-x-24">
                     <div className="shrink-0">
                         <img
-                            src={books.cover_image || "/not-exist.jpg"}
-                            alt={books.title}
+                            src={books?.cover_image || "/not-exist.jpg"}
+                            alt={books?.title}
                             className="h-80 w-64 hover:translate-y-1 rounded-xl"
                             loading="lazy"
                         />
                     </div>
                     <div>
                         <h1 className="font-poppins text-3xl font-bold text-indigo-900">
-                            {books.title}
+                            {books?.title}
                         </h1>
 
                         <div className="flex justify-center items-center gap-2">
                             <h4 className="font-poppins text-3xl font-bold text-gray-400">
-                                by {books.author}
+                                by {books?.author}
                             </h4>
 
                             <div
@@ -106,20 +112,20 @@ const BookDetails = () => {
                                         : "bg-rose-400 text-rose-900"
                                 }`}
                             >
-                                {books.status == 1 ? "Enabled" : "Disabled"}
+                                {books?.status == 1 ? "Enabled" : "Disabled"}
                             </div>
                         </div>
 
                         <p className="mt-6 text-xl text-gray-700 pt-6">
-                            {books.description}
+                            {books?.description}
                         </p>
 
                         <div className="mt-6 text-lg text-gray-700 pt-6">
                             Uploaded by <span className="font-bold text-indigo-900">
-                                {books.user?.name}
+                                {books?.user?.name}
                             </span> &nbsp;
                             <div className="inline-block h-3 border-l-2 border-red-600 mr-2"></div>
-                            {books.total_pages} pages
+                            {books?.total_pages} pages
                         </div>
                     </div>
                 </div>

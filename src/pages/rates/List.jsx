@@ -27,7 +27,15 @@ export default function List({ book_id  }) {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            setRates(res.data);
+            const rating = [];
+            if (res.data.data.length === 0) {
+                rating = res.data.data;
+            }
+
+            console.log('list token: ' + JSON.stringify(token));
+            console.log('list rates: ' + JSON.stringify(rating));
+            console.log("list isArray:", Array.isArray(rating));
+            console.log("list length:", rating.length);
         } catch (err) {
             if (err.response?.status !== 404) {
                 setError("Failed to fetch rates");
