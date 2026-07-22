@@ -185,17 +185,30 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
                         <HiChevronLeft size={20} />
                     </button>
                     <div className="flex items-center gap-1 text-sm">
+                        {currentPage == null ? (
                         <input
                             type="number"
                             min={1}
                             max={numPages || 1}
-                            value={currentPage}
                             onChange={(e) => {
                                 const val = parseInt(e.target.value);
                                 if (val >= 1 && val <= numPages) setCurrentPage(val);
                             }}
                             className="w-12 text-center border border-gray-300 rounded px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+                        ) : (
+                            <input
+                                type="number"
+                                min={1}
+                                max={numPages || 1}
+                                value={currentPage}
+                                onChange={(e) => {
+                                    const val = parseInt(e.target.value);
+                                    if (val >= 1 && val <= numPages) setCurrentPage(val);
+                                }}
+                                className="w-12 text-center border border-gray-300 rounded px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        )}
                         <span className="text-gray-400">/ {numPages}</span>
                     </div>
                     <button
@@ -263,23 +276,27 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
                 </button>
 
                 {/* sidebar toggle */}
-                <button
-                    onClick={() => setShowBookmarks(!showBookmarks)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
-                    showBookmarks
-                        ? "bg-gray-100 border-gray-400 text-gray-800"
-                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                    }`}
-                >
-                    <span style={{fontSize:"16px"}}>
-                        <HiMenu size={20}/>
-                    </span>
-                        Notes
-                    {(bookmarks.length + highlights.length) > 0 && (
-                        <span className="bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                            {bookmarks.length + highlights.length}
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setShowBookmarks(!showBookmarks)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
+                            showBookmarks
+                                ? "bg-gray-100 border-gray-400 text-gray-800"
+                                : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}
+                    >
+                        <span style={{ fontSize: "16px" }}>
+                            <HiMenu size={20} />
                         </span>
-                    )}
+
+                        Notes
+
+                        {(bookmarks.length + highlights.length) > 0 && (
+                            <span className="bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                                {bookmarks.length + highlights.length}
+                            </span>
+                        )}
+                    </button>
 
                     <button
                         onClick={() => setDarkMode(!darkMode)}
@@ -288,7 +305,8 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
                         {darkMode ? <HiSun size={20} /> : <HiMoon size={20} />}
                         {darkMode ? "Light" : "Dark"}
                     </button>
-                </button>
+                </div>
+
             </div>
 
             {/* highlight tool hint */}
