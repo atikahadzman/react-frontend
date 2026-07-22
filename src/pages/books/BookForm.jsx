@@ -48,53 +48,84 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setSuccess("");
+
         setSaving(true);
         setError("");
+        setSuccess("");
 
-        if (!form.book_url) {
-            setError("PDF file is required");
+        if (!form.book_url && !book?.book_url) {
+            setError("PDF file is required.");
             setSaving(false);
             return;
         }
 
-        const formData = new FormData();
-        formData.append("title", form.title);
-        formData.append("author", form.author);
-        formData.append("description", form.description);
-        formData.append("total_pages", form.total_pages);
-        formData.append("status", form.status);
+        try {
+            const formData = new FormData();
 
-        if (form.cover_image instanceof File) {
-            formData.append("cover_image", form.cover_image);
+            formData.append("title", form.title);
+            formData.append("author", form.author);
+            formData.append("description", form.description);
+            formData.append("total_pages", form.total_pages);
+            formData.append("status", form.status);
+
+            if (form.cover_image instanceof File) {
+                formData.append("cover_image", form.cover_image);
+            }
+
+            if (form.book_url instanceof File) {
+                formData.append("book_url", form.book_url);
+            }
+
+            const isEditing = !!book?.id;
+            const url = isEditing
+            ? `${apiUrl}/books/${book.id}`
+            : `${apiUrl}/books`;
+
+            if (isEditing) {
+                formData.append("_method", "PUT");
+            }
+
+            const res = await axios.post(url, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log("Response:", res.data);
+
+            setSuccess("Book saved successfully!");
+
+            if (onSuccess) {
+                onSuccess();
+            }
+
+            setTimeout(() => {
+                onClose();
+            }, 800);
+        } catch (err) {
+            console.error(err);
+
+            if (err.response?.status === 422) {
+                const errors = err.response.data.errors;
+
+                if (errors) {
+                    const messages = Object.values(errors)
+                    .flat()
+                    .join("\n");
+
+                    setError(messages);
+                } else {
+                    setError(err.response.data.message);
+                }
+            } else {
+                setError(
+                    err.response?.data?.message ||
+                    "Something went wrong. Please try again."
+                );
+            }
+        } finally {
+            setSaving(false);
         }
-        if (form.book_url instanceof File) {
-            formData.append("book_url", form.book_url);
-        }
-
-        const isEditing = !!book?.id;
-        const url = isEditing ? `${apiUrl}/books/${book.id}` : `${apiUrl}/books`;
-
-        if (isEditing) {
-            formData.append("_method", "PUT");
-        }
-
-        const res = await axios.post(url, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
-            },
-        });
-        console.log('===== res ===== ' + +JSON.stringify(res));
-
-        if (res.data.status === "success") {
-            // onSuccess();
-            onClose();
-        } else {
-            setError(JSON.stringify(res));
-        }
-
-        window.location.reload();
     };
 
     const statuses = [
@@ -276,3 +307,5 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
         </div>
     );
 }
+
+// Through compelling essays of personal struggles paired with relatable illustrations, I’m Not Lazy. I’m On Energy Saving Mode is a revolutionary book that breaks the convention of hustle culture and recharges your weary heart when you feel like doing nothing.
