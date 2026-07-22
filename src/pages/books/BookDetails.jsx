@@ -10,55 +10,35 @@ const BookDetails = () => {
     const { id } = useParams();
     const location = useLocation();
     const { user, token } = useAuth();
-    // const [books, setBooks] = useState([]);
-    const [books, setBooks] = useState({});
+    const [books, setBook] = useState(null);
     const [error, setError] = useState("");
     const [showRating, setShowRating] = useState(false);
-    const [rates, setRates] = useState({});
+    const [rates, setRates] = useState([]);
     const navigate = useNavigate();
-    // console.log('BOOK token: ' + JSON.stringify(token));
-    console.log('BOOK id: ' + JSON.stringify(id));
 
     useEffect(() => {
-        console.log("BOOK STATE UPDATED:", books);
-        console.log("TYPE:", typeof books);
-        console.log("KEYS:", Object.keys(books));
-    }, [books]);
+        const fetchBooks = async () => {
+            try {
+                const res = await axios.get(apiUrl + "/books/" + id, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-    const fetchBooks = async () => {
-        try {
-            const res = await axios.get(apiUrl + "/books/" + id, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            
-            const book = res.data.data;
-console.log("BOOKS:", JSON.stringify(book));
-console.log("BOOK length:", book.length);
+                const data = res.data.data;
 
-            setBooks({
-                ...book,
-                cover_image: book.media?.find(m => m.collection_name === 'cover_image')?.original_url ?? null,
-                pdf_url: book.media?.find(m => m.collection_name === 'book_url')?.original_url ?? null,
-            });
-        } catch (err) {
-            setError("Failed to load book");
-        }
-    };
-console.log('BOOK HEREE: ' + JSON.stringify(books));
-    // get rating by current user
-    const fetchRates = async () => {
-        try {
-            const res = await axios.get(apiUrl + "/rate/by-user/" + id, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setRates((prev) => ({ ...prev, [id]: res.data }));
-        } catch (err) {
-            if (err.response?.status !== 404) {
-                setError("Failed to fetch rates");
+                setBook({
+                    ...data,
+                    cover_image:
+                        data.media?.find(
+                            (m) => m.collection_name === "cover_image"
+                        )?.original_url ?? "/not-exist.jpg",
+                });
+            } catch {
+                setError("Failed to fetch books");
             }
-            setRates((prev) => ({ ...prev, [id]: null }));
-        }
-    };
+        };
+
+        fetchBooks();
+    }, [id, token]);
 
     return (
         <div className="min-h-screen w-full bg-gray-50">
@@ -107,7 +87,7 @@ console.log('BOOK HEREE: ' + JSON.stringify(books));
 
                             <div
                                 className={`w-fit rounded-md px-2 py-1 text-sm font-semibold whitespace-nowrap ${
-                                    books.status == 1
+                                    books?.status == 1
                                         ? "bg-lime-400 text-lime-900"
                                         : "bg-rose-400 text-rose-900"
                                 }`}
