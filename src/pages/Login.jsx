@@ -14,10 +14,6 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log("login page");
-    }, []);
-
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
@@ -29,10 +25,11 @@ const Login = () => {
                 password,
             });
             const token = res.data?.token;
-            const user = res.data.user;
+            const user = res.data?.user;
+            const expires_at = res.data?.expires_at;
 
-            if (!token) {
-                setError("Login error: Token not found " + + JSON.stringify(res));
+            if (!token || !expires_at) {
+                setError("Login error: Something went wrong. Please try again.");
                 return;
             }
 
@@ -42,6 +39,7 @@ const Login = () => {
             }
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("expires_at", JSON.stringify(expires_at));
 
             navigate("/dashboard");
         } catch (err) {
