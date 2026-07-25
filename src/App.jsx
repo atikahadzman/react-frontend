@@ -17,12 +17,6 @@ import Layout from "./layout/Layout";
 
 function App() {
     const token = localStorage.getItem('token');
-    const expires_at = localStorage.getItem('expires_at');
-
-    const authenticated =
-        token &&
-        expiresAt &&
-        new Date(expiresAt).getTime() > Date.now();
 
     return (
         <AuthProvider>
@@ -32,24 +26,24 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route
                         path="/dashboard"
-                        element={authenticated ? <Layout><Dashboard /></Layout> : <Navigate to="/login" />}
+                        element={token ? <Layout><Dashboard /></Layout> : <Navigate to="/login" />}
                     /> 
                     <Route
                         path="/books"
-                        element={authenticated ? <Layout><Books /></Layout> : <Navigate to="/login" />}
+                        element={token ? <Layout><Books /></Layout> : <Navigate to="/login" />}
                     />
                     <Route path="/books/:id" element={<BookDetails />} />
                     <Route
                         path="/progress"
-                        element={authenticated ? <Layout><Progress /></Layout> : <Navigate to="/login" />}
+                        element={token ? <Layout><Progress /></Layout> : <Navigate to="/login" />}
                     />
                     <Route
                         path="/users"
-                        element={authenticated ? <Layout><Users /></Layout> : <Navigate to="/users" />}
+                        element={token ? <Layout><Users /></Layout> : <Navigate to="/users" />}
                     />
                     <Route
                         path="/roles"
-                        element={authenticated ? <Layout><Roles /></Layout> : <Navigate to="/roles" />}
+                        element={token ? <Layout><Roles /></Layout> : <Navigate to="/roles" />}
                     />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>

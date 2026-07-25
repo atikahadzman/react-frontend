@@ -7,7 +7,7 @@ import '../index.css'
 
 const Login = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    const { login } = useAuth();
+    // const { login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -39,7 +39,7 @@ const Login = () => {
             }
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
-            localStorage.setItem("expires_at", JSON.stringify(expires_at));
+            localStorage.setItem("expires_at", expires_at);
 
             navigate("/dashboard");
         } catch (err) {
