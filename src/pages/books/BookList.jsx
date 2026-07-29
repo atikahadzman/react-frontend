@@ -103,12 +103,12 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                     placeholder="Search by title or author..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="text-white w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="text-gray-700 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="text-white px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                     <option value="">All status</option>
                     {Object.entries(statusLabels).map(([value, label]) => (
@@ -124,15 +124,15 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                     Ops, it's empty here
                 </div>
             ) : (
-                <div className="bg-white rounded-xl flex flex-col gap-6 overflow-hidden">
+                <div className="rounded-xl flex flex-col gap-6 overflow-hidden">
                     {filteredBook.map((book) => {
                         const isOwner = user?.id === book.added_by;
                         const hasProgress = book.bookmark && book.progress_id && user?.id === book.user_id;
                         const btnLabel = book.bookmark === book.total_pages ? "Reread" : "Continue...";
 
                         return (
-                            <div className="flex flex-col rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-4">
-                                <div key={book.id} className="flex flex-col gap-6 mb-5 p-2">
+                            <div className="flex flex-col rounded-xl bg-[#f9f3ee] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div key={book.id} className="flex flex-col gap-6 mb-5">
                                     <div className="flex flex-col items-center gap-x-8 rounded-md p-3 md:flex-row">
                                         {/* cover image */}
                                         <div className="shrink-0">
@@ -266,7 +266,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                                     setSelectedBook(book); 
                                                                     setSelectedProgressId(book.progress_id); 
                                                                 }}
-                                                                className="w-50 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium"
+                                                                className="border-2 border-indigo-900 text-indigo-900 px-6 py-3 hover:bg-white hover:text-blue-600 transition"
                                                             >
                                                                 Start Reading
                                                             </button>
@@ -285,7 +285,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                                 setSelectedBook(book); 
                                                                 setSelectedProgressId(book.progress_id);
                                                             }}
-                                                            className="w-24 bg-white text-sm text-blue-800 border border-blue-500 hover:border-blue-400 px-3 py-1.5 rounded-lg transition font-medium"
+                                                            className="border-2 border-indigo-900 text-indigo-900 px-6 py-3 hover:bg-white hover:text-blue-600 transition"
                                                         >
                                                             Reread
                                                         </button>

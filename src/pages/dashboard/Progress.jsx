@@ -29,7 +29,7 @@ export default function Progress() {
 
     return (
         <>
-            <div className="main-card">
+            <div className="main-card rounded-md py-5 font-poppins">
                 <div className="card-body">
 
                     {/* error */}
@@ -39,8 +39,8 @@ export default function Progress() {
                         </div>
                     )}
 
-                    <h3 className="font-poppins text-2xl font-bold text-black">
-                        Your current read
+                    <h3 className="text-2xl font-bold text-white">
+                        Continue Reading...
                     </h3>
 
                     {books.length === 0 ? (

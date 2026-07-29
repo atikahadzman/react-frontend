@@ -16,9 +16,9 @@ export default function ProgressCard({ book, user, onRead }) {
     const btnLabel = completed ? "Reread" : "Continue...";
 
     return (
-        <div className="rounded-xl border border-gray-100 p-4 shadow-sm">
+        <div className="rounded-xl bg-[#f9f3ee] border border-gray-100 p-4 shadow-sm">
             <div className="flex flex-col gap-6 p-2">
-                <div className="flex flex-col items-center gap-x-8 rounded-md md:flex-row">
+                <div className="flex flex-col items-center gap-5 rounded-md md:flex-row">
 
                     {/* cover image */}
                     <div className="shrink-0">
@@ -93,8 +93,7 @@ export default function ProgressCard({ book, user, onRead }) {
                                         setSelectedBook(book);
                                         setSelectedProgressId(book.progress_id);
                                     }}
-                                    className="text-md text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 
-                                    rounded-lg transition font-medium whitespace-nowrap hover:bg-blue-400 hover:text-white transition"
+                                    className="border-2 border-indigo-900 text-indigo-900 px-3 py-3 hover:bg-white hover:text-blue-600 transition"
                                 >
                                     {btnLabel}
                                 </button>

@@ -31,7 +31,7 @@ export default function List({ roles = [], onClose, onSuccess }) {
     };
 
     return (
-        <div className="w-full px-6 py-8">
+        <div className="w-[500px] bg-[#f9f3ee] rounded-md">
             {error && (
                 <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-sm text-red-600">{error}</p>
@@ -48,18 +48,18 @@ export default function List({ roles = [], onClose, onSuccess }) {
                     Ops, it's empty here
                 </div>
             ) : (
-                <table className="w-full min-w-max table-auto text-left">
-                    <thead className="border-b border-slate-300 bg-slate-50/75 text-sm font-semibold text-slate-700">
+                <table className="w-[500px] min-w-max text-left px-8 py-8">
+                    <thead className="border-b border-slate-300 bg-slate-50/75 text-sm font-semibold text-black">
                         <tr>
                             <th className="p-4">Title</th>
                             <th className="p-4 text-right">Actions</th>
                         </tr>
                     </thead>
 
-                    <tbody className="divide-y divide-slate-100 text-sm text-slate-600">
+                    <tbody className="divide-y divide-slate-100 text-sm text-black">
                         {roles.map((role) => (
-                            <tr key={role.id} className="transition-colors hover:bg-slate-50/50 text-black">
-                                <td className="p-4 font-medium text-slate-900">{role.title}</td>
+                            <tr key={role.id} className="transition-colors hover:bg-slate-50/50">
+                                <td className="p-4 font-medium">{role.title}</td>
                                 <td className="p-4 text-right">
                                     <div className="flex items-center justify-end gap-2">
                                         <button
@@ -67,7 +67,7 @@ export default function List({ roles = [], onClose, onSuccess }) {
                                                 setEditUser(role); 
                                                 setShowModal(true); 
                                             }}
-                                            className="font-medium text-sm text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg transition"
+                                           className="border-2 border-blue-900 hover:bg-blue-900 hover:text-white text-indigo-900 text-sm px-3 py-1.5 rounded-lg transition mt-4"
                                         >
                                             Update
                                         </button>
@@ -87,7 +87,7 @@ export default function List({ roles = [], onClose, onSuccess }) {
                                             onClick={() => 
                                                 handleDelete(role.id)
                                             }
-                                            className="font-medium text-sm text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded-lg transition"
+                                            className="border-2 border-red-900 hover:bg-red-900 hover:text-white text-red-900 text-sm px-3 py-1.5 rounded-lg transition mt-4"
                                         >
                                             Delete
                                         </button>

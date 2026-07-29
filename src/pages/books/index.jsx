@@ -56,7 +56,7 @@ const Books = () => {
     };
 
     return (
-        <div className="min-h-screen w-full bg-gray-50">
+        <div className="min-h-screen w-full bg-[#1e1e2c]">
             <div className="w-full px-6 py-8">
 
                 {/* header */}
