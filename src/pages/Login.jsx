@@ -7,7 +7,7 @@ import '../index.css'
 
 const Login = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    // const { login } = useAuth();
+    const { login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");

@@ -1,32 +1,29 @@
-import axios from 'axios';
+import axios from "axios";
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const api = axios.create({
-    baseURL: apiUrl,
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    }
+        "Content-Type": "application/json",
+        Accept: "application/json",
+    },
 });
 
-// Attach token to every request automatically
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
+
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
 });
 
-// Redirect to login if token expired
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('expires_at');
-            window.location.href = '/login';
+            localStorage.clear();
+            window.location.href = "/login";
         }
         return Promise.reject(error);
     }
