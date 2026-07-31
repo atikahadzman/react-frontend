@@ -6,12 +6,13 @@ import Progress from "./Progress";
 import BookOfMonth from "./BookOfMonth";
 
 import { useAuth } from "../../context/AuthContext";
-import { Books } from "../../services/bookService";
+import { getBooks, getBookOfTheMonth } from "../../services/bookService";
 
 export default function Dashboard() {
     const navigate = useNavigate();
     const { token } = useAuth();
     const [books, setBooks] = useState([]);
+    const [bookOfTheMonth, setBookOfTheMonth] = useState(null);
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -21,14 +22,24 @@ export default function Dashboard() {
         }
 
         loadBooks();
+        loadBookOfTheMonth();
     }, [token]);
 
     const loadBooks = async () => {
         try {
-            const data = await Books();
+            const data = await getBooks();
             setBooks(data);
         } catch (err) {
             setError("Failed to fetch books");
+        }
+    };
+    
+    const loadBookOfTheMonth = async () => {
+        try {
+            const data = await getBookOfTheMonth();
+            setBookOfTheMonth(data);
+        } catch (err) {
+            setError("Failed to fetch book");
         }
     };
 
@@ -37,23 +48,16 @@ export default function Dashboard() {
             <div className="w-full px-6 py-8">
                 <Banner />
                 
-                {/* <div className="flex flex-col gap-6 mt-6 pt-6">
-                    <Progress books={books}/>
-                </div> */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                    <div className="lg:col-span-2">
+                        <Progress />
+                    </div>
 
-                {/* Progress takes 2 columns */}
-                <div className="lg:col-span-2">
-                    <Progress />
+
+                    <div className="lg:col-span-1">
+                        <BookOfMonth book={bookOfTheMonth}/>
+                    </div>
                 </div>
-
-
-                {/* Book of month takes 1 column */}
-                <div className="lg:col-span-1">
-                    <BookOfMonth />
-                </div>
-
-            </div>
             </div>
         </div>
     );
