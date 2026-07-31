@@ -7,7 +7,7 @@ import Books from "./pages/books";
 import Users from "./pages/users";
 import Roles from "./pages/roles";
 import Progress from "./pages/Progress";
-import BookDetails from "./pages/books/BookDetails";
+import BookDetails from "./pages/books/Details";
 
 import Layout from "./layout/Layout";
 import ProtectedRoute from "./routes/ProtectedRoute";

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { HiPlus, HiDocument } from "react-icons/hi";
-import BookForm from "./BookForm";
+import BookForm from "./Form";
 
 export default function BookBanner({ books, onClose, onSuccess }) {
     const [showModal, setShowModal] = useState(false);

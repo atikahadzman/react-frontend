@@ -4,120 +4,65 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { HiBookOpen, HiX, HiStar, HiOutlineStar } from "react-icons/hi"; 
 import PDFViewer from "../PDFViewer";
-import BookForm from "./BookForm";
+import BookForm from "./Form";
 import Alert from "./Alert";
 import Rates from "../rates/Form";
+import FilterSearch from "./FilterSearch";
+import { getRateById } from "../../services/ratesService";
 
 export default function BookList({ books = [], onClose, onSuccess }) {
-    const apiUrl = import.meta.env.VITE_API_URL;
     const [selectedProgressId, setSelectedProgressId] = useState(null);
     const { user, token } = useAuth();
     const [selectedBook, setSelectedBook] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [editBook, setEditBook] = useState(null);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [search, setSearch] = useState("");
-    const [filterBook, setFilterBook] = useState("");
-    const [filterStatus, setFilterStatus] = useState("");
+    const [filteredBook, setFilteredBook] = useState(books);
     const [deleteBookId, setDeleteBookId] = useState("");
     const [showRating, setShowRating] = useState(false);
     const [rates, setRates] = useState({});
     const navigate = useNavigate();
+    const userId = user?.id;
 
     useEffect(() => {
-    if (books.length > 0) {
-            books
-                .filter((book) => book.bookmark === book.total_pages)
-                .forEach((book) => fetchRates(book.id));
-        }
+        setFilteredBook(books);
+
+        const loadRates = async () => {
+            const completedBooks = books.filter(
+                (book) => book.bookmark === book.total_pages
+            );
+
+            for (const book of completedBooks) {
+                await fetchRates(book.id);
+            }
+        };
+        
     }, [books]);
 
-    // store rate per book
-    const fetchRates = async (id) => {
+    const fetchRates = async (bookId) => {
         try {
-            const res = await axios.get(`${apiUrl}/rate/by-user/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setRates((prev) => ({ ...prev, [id]: res.data }));
+            const data = await getRateById(userId);
+
+            setRates((prev) => ({
+                ...prev,
+                [bookId]: data
+            }));
+
         } catch (err) {
-            if (err.response?.status !== 404) {
-                setError("Failed to fetch rates");
-            }
-            setRates((prev) => ({ ...prev, [id]: null }));
+            console.error("Failed to fetch rate", err);
         }
     };
 
     const handleDeleteClick = (id) => {
-        setError("");
-        setSuccess("");
         setShowDeleteModal(true);
     };
 
-    // for filter purpose
-    const getBookStatus = (book) => {
-        if (book.bookmark == null) return "not_started";
-        if (Number(book.bookmark) >= Number(book.total_pages)) return "completed";
-        return "in_progress";
-    };
-
-    const statusLabels = {
-        not_started: "Not Started",
-        in_progress: "In Progress",
-        completed: "Completed",
-    };
-
-    const filteredBook = books.filter((book) => {
-        const matchSearch =
-            book.title.toLowerCase().includes(search.toLowerCase()) ||
-            book.author.toLowerCase().includes(search.toLowerCase());
-
-        const matchBook = filterBook
-            ? Number(book.id) === Number(filterBook)
-            : true;
-
-        const matchStatus = filterStatus
-            ? getBookStatus(book) === filterStatus
-            : true;
-
-        return matchSearch && matchBook && matchStatus;
-    });
-
     return (
         <div className="w-full px-6 py-8">
-            {error && (
-                <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-red-600">{error}</p>
-                </div>
-            )}
-            {success && (
-                <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-sm text-green-600">{success}</p>
-                </div>
-            )}
-
-            <div className="flex gap-3 mb-4">
-                <input
-                    type="text"
-                    placeholder="Search by title or author..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="text-white w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="text-white px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option value="">All status</option>
-                    {Object.entries(statusLabels).map(([value, label]) => (
-                        <option key={value} value={value}>
-                            {label}
-                        </option>
-                    ))}
-                </select>
-            </div>
+            <FilterSearch 
+                books={books}
+                onFilter={setFilteredBook}
+            />
 
             {books.length === 0 ? (
                 <div className="text-center py-24 font-poppins font-semibold text-white">
@@ -140,14 +85,14 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                 {/* mobile */}
                                                 <img
                                                     src={book.cover_image || "/not-exist.jpg"}
-                                                    className="block md:hidden w-full object-cover rounded-2xl hover:translate-x-1 transition-transform"
+                                                    className="block md:hidden w-50 object-cover rounded-2xl hover:translate-x-1 transition-transform"
                                                     alt={book.title}
                                                     loading="lazy"
                                                 />
                                                 {/* desktop */}
                                                 <img
                                                     src={book.cover_image || "/not-exist.jpg"}
-                                                    className="hidden md:block w-50 h-64 object-cover rounded-2xl p-2 hover:translate-x-1 transition-transform"
+                                                    className="hidden md:block w-30 h-50 object-cover rounded-2xl p-2 hover:translate-x-1 transition-transform"
                                                     alt={book.title}
                                                     loading="lazy"
                                                 />
@@ -312,7 +257,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                             setEditBook(book);
                                                             setShowModal(true);
                                                         }}
-                                                        className="bg-blue-600 text-sm text-white hover:bg-blue-700 px-3 py-1.5 rounded-lg transition font-medium"
+                                                        className="border-2 border-blue-900 hover:bg-blue-900 hover:text-white text-indigo-900 text-sm px-3 py-1.5 rounded-lg transition mt-4"
                                                     >
                                                         Update
                                                     </button>
@@ -333,7 +278,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                             handleDeleteClick(book.id);
                                                             setDeleteBookId(book.id);
                                                         }}
-                                                        className="bg-red-600 text-sm text-white hover:bg-red-700 px-3 py-1.5 rounded-lg transition font-medium"
+                                                        className="border-2 border-red-900 hover:bg-red-900 hover:text-white text-red-900 text-sm px-3 py-1.5 rounded-lg transition mt-4"
                                                     >
                                                         Delete
                                                     </button>

@@ -20,13 +20,11 @@ export default function List({ book_id  }) {
         // get all rating by book id
         const fetchRates = async () => {
             try {
-                const res = await axios.get(apiUrl + "/rate/by-book-id/" + book_id, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const res = await getRateByBookId(book_id);
 
                 const rating = [];
-                if (res.data.data.length === 0) {
-                    rating = res.data.data;
+                if (res.length === 0) {
+                    rating = res;
                 }
             } catch (err) {
                 if (err.response?.status !== 404) {

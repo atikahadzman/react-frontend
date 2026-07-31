@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { HiPhotograph, HiDocument } from "react-icons/hi";
 import { Document, pdfjs } from "react-pdf";
+import ErrorAlert from "../../alert/ErrorAlert";
+import SuccessAlert from "../../alert/SuccessAlert";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -152,14 +154,10 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                 </div>
 
                 {error && (
-                    <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-sm text-red-600">{error}</p>
-                    </div>
+                    <ErrorAlert message={error}/>
                 )}
                 {success && (
-                    <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-sm text-green-600">{success}</p>
-                    </div>
+                    <SuccessAlert message={success}/>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">

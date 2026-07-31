@@ -7,7 +7,13 @@ export const getBooks = async () => {
 
 export const getBookById = async (id) => {
     const response = await api.get(`/books/${id}`);
-    return response.data;
+    const book = response.data.data;
+
+    return {
+        ...book,
+        cover_image: book.media?.find(m => m.collection_name === 'cover_image')?.original_url ?? null,
+        pdf_url: book.media?.find(m => m.collection_name === 'book_url')?.original_url ?? null,
+    };
 };
 
 export const createBook = async (formData) => {
@@ -49,4 +55,25 @@ export const getBookOfTheMonth = async () => {
                 (m) => m.collection_name === "book_url"
             )?.original_url ?? null,
     };
+};
+
+export const getBookProgressByUser = async (id) => {
+    const response = await api.get(`/book/books-progress/${id}`);
+    const book = response.data.data;
+
+    const mapped = book.map((book) => {
+        return {
+            ...book,
+            last_read_at: book.last_read_at
+                ? new Date(book.last_read_at).toLocaleString(undefined, {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                })
+                : "Never",
+            cover_image: book.media?.find(m => m.collection_name === 'cover_image')?.original_url ?? null,
+            pdf_url: book.media?.find(m => m.collection_name === 'book_url')?.original_url ?? null,
+        };
+    }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    
+    return mapped;
 };
