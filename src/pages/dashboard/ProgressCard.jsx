@@ -1,6 +1,11 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import PDFViewer from "../PDFViewer";
 
-export default function ProgressCard({ book, user, onRead }) {
+export default function ProgressCard({ book, user }) {
+    const [selectedBook, setSelectedBook] = useState(null);
+    const [selectedProgressId, setSelectedProgressId] = useState(null);
+
     const hasProgress =
         book.bookmark &&
         book.progress_id &&
@@ -101,6 +106,21 @@ export default function ProgressCard({ book, user, onRead }) {
                         </div>
                     </div>
                 </div>
+
+                {selectedBook && (
+                <PDFViewer
+                    bookUrl={selectedBook.pdf_url}
+                    bookId={selectedBook.id}
+                    userId={user.id}
+                    progressId={selectedBook.progress_id}
+                    initialPage={
+                        selectedBook.bookmark === selectedBook.total_pages
+                            ? 1
+                            : selectedBook.bookmark
+                    }
+                    onClose={() => setSelectedBook(null)}
+                />
+            )}
             </div>
         </div>
     );

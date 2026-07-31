@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { getProgressByUser } from "../../services/progressService";
-
 import ProgressCard from "./ProgressCard";
-import PDFViewer from "../PDFViewer";
 
 export default function Progress() {
     const { user } = useAuth();
@@ -54,28 +52,12 @@ export default function Progress() {
                                     key={book.id}
                                     book={book}
                                     user={user}
-                                    onRead={() => setSelectedBook(book)}
                                 />
                             ))}
                         </div>
                     )}
                 </div>
             </div>
-
-            {selectedBook && (
-                <PDFViewer
-                    bookUrl={selectedBook.pdf_url}
-                    bookId={selectedBook.id}
-                    userId={user.id}
-                    progressId={selectedBook.progress_id}
-                    initialPage={
-                        selectedBook.bookmark === selectedBook.total_pages
-                            ? 1
-                            : selectedBook.bookmark
-                    }
-                    onClose={() => setSelectedBook(null)}
-                />
-            )}
         </>
     );
 }
