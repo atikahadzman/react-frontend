@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { HiStar, HiOutlineStar } from "react-icons/hi";
+import Rates from "../pages/rates/Form";
 
 export default function Rating({ id, rates }) {
     const [showRating, setShowRating] = useState(false);
+    const bookId = rates[id]?.book_id;
 
     return (
         <div>
@@ -39,6 +41,14 @@ export default function Rating({ id, rates }) {
                     </span>
                     Rate this book!
                 </button>
+            )}
+
+            {showRating && bookId && (
+                <Rates
+                    rates={rates[bookId]}
+                    id={bookId}
+                    onClose={() => setShowRating(false)}
+                />
             )}
         </div>
     );
