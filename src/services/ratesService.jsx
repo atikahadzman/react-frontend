@@ -6,6 +6,5 @@ export const getRateById = async (id) => {
 };
 export const getRateByBookId = async (id) => {
     const response = await api.get(`/rate/by-book-id/${id}`);
-
-    return response.data.data;
+    return response.data.data[0] ?? null;
 };
