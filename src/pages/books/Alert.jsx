@@ -13,17 +13,12 @@ export default function Alert({ modalTitle, id, onClose, onSuccess }) {
     const confirmDelete = async () => {
         setError("");
         setSuccess("");
-        console.log(' === id === ' + id);
 
-        const res = await axios.delete(apiUrl + "/books/" + id, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.data.status == 'success') {
-            onClose();
-            setSuccess(res.data.message);
-        } else {
-            setError(res.data.message);
+        try {
+            const data = await deleteBook(id);
+            setSuccess(data.message);
+        } catch (err) {
+            setError(data.message);
         }
         window.location.reload();
     };
@@ -46,38 +41,27 @@ export default function Alert({ modalTitle, id, onClose, onSuccess }) {
                     </button>
                 </div>
 
-                {error && (
-                    <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-sm text-red-600">{error}</p>
-                    </div>
-                )}
-                {success && (
-                    <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-sm text-green-600">{success}</p>
-                    </div>
-                )}
+                <p className="text-gray-700">
+                    Some readers may still be reading it...
+                </p>
 
-                {/* <form onSubmit={handleSubmit} className="space-y-4"> */}
-                    <p className="text-gray-700">Some readers may still be reading it...</p>
-
-                    <div className="flex flex-col gap-2 p-2">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                console.log("Cancel clicked");
-                                onClose();
-                            }}
-                            className="bg-white text-sm border border-gray-300 text-gray-700 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition font-medium"
-                        >
-                            Cancel
-                        </button>
-                        <button className="bg-red-600 text-sm text-white hover:bg-red-700 px-3 py-1.5 rounded-lg transition font-medium"
-                            onClick={confirmDelete}
-                        >
-                            Yes, Delete
-                        </button>
-                    </div>
-                {/* </form> */}
+                <div className="flex flex-col gap-2 p-2">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            console.log("Cancel clicked");
+                            onClose();
+                        }}
+                        className="bg-white text-sm border border-gray-300 text-gray-700 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition font-medium"
+                    >
+                        Cancel
+                    </button>
+                    <button className="bg-red-600 text-sm text-white hover:bg-red-700 px-3 py-1.5 rounded-lg transition font-medium"
+                        onClick={confirmDelete}
+                    >
+                        Yes, Delete
+                    </button>
+                </div>
             </div>
         </div>
     );
