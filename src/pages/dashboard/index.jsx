@@ -60,7 +60,7 @@ export default function Dashboard() {
     return (
         <div className="min-h-screen w-full bg-[#1e1e2c]">
             <div className="w-full px-6 py-8">
-                <div className="grid grid-cols-3 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2">
                         <Banner />
                     </div>
