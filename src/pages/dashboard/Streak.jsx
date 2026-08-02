@@ -8,7 +8,7 @@ export default function Streak({ streak }) {
 
     if (!streak?.message) {
         return (
-            <div className="main-card bg-[#fec600] rounded-md font-poppins">
+            <div className="main-card bg-[#111111] rounded-md font-poppins">
                 <div className="card-body">
                     <h1 className="text-2xl font-bold text-[#152c3d]">
                         {streak?.streak}
