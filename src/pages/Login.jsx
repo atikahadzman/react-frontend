@@ -50,12 +50,12 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex">
+        <div className="min-h-screen flex bg-[#1e1e2c] text-white">
             {/* form */}
-            <div className="w-full md:w-2/5 bg-white flex items-center justify-center p-8">
+            <div className="w-full md:w-2/5 flex items-center justify-center p-8">
                 <div className="w-full max-w-md">
                     <div className="mb-8 text-center">
-                        <h2 className="text-gray-800">
+                        <h2 className="text-white">
                             Sign in to your account
                         </h2>
                     </div>
@@ -70,7 +70,7 @@ const Login = () => {
                         {/* email */}
                         <div>
                             <div className="flex items-center justify-between mb-1">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium">
                                     Email
                                 </label>
                             </div>
@@ -81,14 +81,14 @@ const Login = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                 />
                         </div>
 
                         {/* password */}
                         <div>
                             <div className="flex items-center justify-between mb-1">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium">
                                     Password
                                 </label>
 
@@ -110,7 +110,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-gray-800 rounded-lg"
+                            className="w-full py-2.5 px-4 border-2 bg-indigo-900 border-indigo-900 px-6 py-3 hover:bg-white hover:text-indigo-900 transition"
                         >
                             {loading ? "Signing in..." : "Sign in"}
                         </button>
@@ -118,11 +118,11 @@ const Login = () => {
 
                     <div className="flex items-center my-6">
                         <div className="flex-1 border-t border-gray-200"/>
-                        <span className="px-3 text-xs text-gray-400">or</span>
+                        <span className="px-3 text-xs">or</span>
                         <div className="flex-1 border-t border-gray-200"/>
                     </div>
 
-                    <p className="text-center text-sm text-gray-500">
+                    <p className="text-center text-sm">
                         Don't have an account?{" "}
                         <Link
                             to="/register"
