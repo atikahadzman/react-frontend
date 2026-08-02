@@ -4,7 +4,6 @@ import { getReadingStreak } from "../../services/progressService";
 import { HiFire } from "react-icons/hi";
 
 export default function Streak({ streak }) {
-    console.log('streak: ' + JSON.stringify(streak))
     const [loading, setLoading] = useState(true);
 
     if (!streak?.message) {
