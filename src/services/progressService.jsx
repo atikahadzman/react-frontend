@@ -31,3 +31,9 @@ export const getProgressByUser = async (userId) => {
             )?.original_url ?? null,
     }));
 };
+
+export const getReadingStreak = async () => {
+    const res = await api.get("/progress/streak");
+
+    return res.data;
+};
