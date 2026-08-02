@@ -5,6 +5,7 @@ import { HiPhotograph, HiDocument } from "react-icons/hi";
 import { Document, pdfjs } from "react-pdf";
 import ErrorAlert from "../../alert/ErrorAlert";
 import SuccessAlert from "../../alert/SuccessAlert";
+import { saveBook } from "../../services/bookService";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -12,7 +13,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) {
-    const apiUrl = import.meta.env.VITE_API_URL;
     const { user, token } = useAuth();
     const [form, setForm] = useState({
         title: book?.title || "",
@@ -51,80 +51,18 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setSaving(true);
-        setError("");
-        setSuccess("");
-
-        if (!form.book_url && !book?.book_url) {
-            setError("PDF file is required.");
-            setSaving(false);
-            return;
-        }
-
         try {
-            const formData = new FormData();
-
-            formData.append("title", form.title);
-            formData.append("author", form.author);
-            formData.append("description", form.description);
-            formData.append("total_pages", form.total_pages);
-            formData.append("status", form.status);
-
-            if (form.cover_image instanceof File) {
-                formData.append("cover_image", form.cover_image);
-            }
-
-            if (form.book_url instanceof File) {
-                formData.append("book_url", form.book_url);
-            }
-
-            const isEditing = !!book?.id;
-            const url = isEditing
-            ? `${apiUrl}/books/${book.id}`
-            : `${apiUrl}/books`;
-
-            if (isEditing) {
-                formData.append("_method", "PUT");
-            }
-
-            const res = await axios.post(url, formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            console.log("Response:", res.data);
-
-            setSuccess("Book saved successfully!");
-
-            if (onSuccess) {
-                onSuccess();
-            }
+            setSaving(true);
+            await saveBook(book, form);
+            setSuccess("Book saved!");
+            onSuccess?.();
 
             setTimeout(() => {
                 onClose();
+                window.location.reload();
             }, 800);
         } catch (err) {
-            console.error(err);
-
-            if (err.response?.status === 422) {
-                const errors = err.response.data.errors;
-
-                if (errors) {
-                    const messages = Object.values(errors)
-                    .flat()
-                    .join("\n");
-
-                    setError(messages);
-                } else {
-                    setError(err.response.data.message);
-                }
-            } else {
-                setError(
-                    err.response?.data?.message ||
-                    "Something went wrong. Please try again."
-                );
-            }
+            setError(err.response?.data?.message ?? "Something went wrong ");
         } finally {
             setSaving(false);
         }
@@ -171,7 +109,7 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                             onChange={handleChange}
                             required
                             placeholder="Book title"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
@@ -185,7 +123,7 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                             onChange={handleChange}
                             required
                             placeholder="Author name"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
@@ -199,7 +137,7 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                             onChange={handleChange}
                             rows={3}
                             placeholder="Short description..."
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                            className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                         />
                     </div>
 
@@ -211,7 +149,7 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                             name="status"
                             value={form.status}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="">Select status</option>
                             {statuses.map((status) => (
@@ -279,7 +217,7 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
                             value={form.total_pages}
                             onChange={handleChange}
                             placeholder="e.g. 320"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-200 cursor-not-allowed"
+                            className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-200 cursor-not-allowed"
                             readOnly
                         />
                     </div>
@@ -305,5 +243,3 @@ export default function BookForm({ modalTitle, book = [], onClose, onSuccess }) 
         </div>
     );
 }
-
-// Through compelling essays of personal struggles paired with relatable illustrations, I’m Not Lazy. I’m On Energy Saving Mode is a revolutionary book that breaks the convention of hustle culture and recharges your weary heart when you feel like doing nothing.

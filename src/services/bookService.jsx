@@ -16,8 +16,38 @@ export const getBookById = async (id) => {
     };
 };
 
-export const createBook = async (formData) => {
-    const response = await api.post("/books", formData, {
+export const saveBook = async (book, form) => {
+    const formData = new FormData();
+
+    formData.append("title", form.title);
+    formData.append("author", form.author);
+    formData.append("description", form.description);
+    formData.append("total_pages", form.total_pages);
+    formData.append("status", form.status);
+
+    if (form.cover_image instanceof File) {
+        formData.append("cover_image", form.cover_image);
+    }
+
+    if (form.book_url instanceof File) {
+        formData.append("book_url", form.book_url);
+    }
+
+    for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
+
+    const isEditing = !!book?.id;
+
+    if (isEditing) {
+        formData.append("_method", "PUT");
+    }
+
+    const url = isEditing
+        ? `/books/${book.id}`
+        : "/books";
+
+    const response = await api.post(url, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
