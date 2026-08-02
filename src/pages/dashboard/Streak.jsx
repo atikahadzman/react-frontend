@@ -55,6 +55,9 @@ export default function Streak({ streak }) {
                     </div>
 
                     <div className="flex justify-center">
+                        <span className="text-sm text-gray-200 font-bold px-2 py-2">
+                            {streak?.message}
+                        </span>
                         <img
                             src={currentStyle.image}
                             alt="Reading streak"
