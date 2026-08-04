@@ -145,6 +145,10 @@ const PDFViewer = ({ bookUrl, bookId, userId, progressId: initialProgressId, ini
         setBookmarks(bookmarks.filter((b) => b.id !== id));
     };
 
+    if (currentPage == null) {
+        setCurrentPage(1);
+    }
+
     const goToPage = (page) => {
         setCurrentPage(page);
         setShowBookmarks(false);

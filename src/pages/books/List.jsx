@@ -10,7 +10,7 @@ import Rates from "../rates/Form";
 import FilterSearch from "./FilterSearch";
 import { getRateById } from "../../services/ratesService";
 
-export default function BookList({ books = [], onClose, onSuccess }) {
+export default function List({ books, onClose, onSuccess }) {
     const [selectedProgressId, setSelectedProgressId] = useState(null);
     const { user, token } = useAuth();
     const [selectedBook, setSelectedBook] = useState(null);
@@ -228,7 +228,7 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                                                         <button
                                                             onClick={() => { 
                                                                 setSelectedBook(book); 
-                                                                setSelectedProgressId(book.progress_id);
+                                                                setSelectedProgressId(book?.progress_id);
                                                             }}
                                                             className="border-2 border-indigo-900 text-indigo-900 px-6 py-3 hover:bg-white hover:text-blue-600 transition"
                                                         >
@@ -306,10 +306,14 @@ export default function BookList({ books = [], onClose, onSuccess }) {
                 <PDFViewer
                     bookUrl={selectedBook.pdf_url}
                     bookId={selectedBook.id}
-                    userId={user?.id}
-                    progressId={selectedProgressId}
-                    initialPage={selectedBook.bookmark === selectedBook.total_pages ? 1 : selectedBook.bookmark}
-                    onClose={() => { setSelectedBook(null); setSelectedProgressId(null); }}
+                    userId={user.id}
+                    progressId={selectedBook.progress_id}
+                    initialPage={
+                        selectedBook.bookmark === selectedBook.total_pages
+                            ? 1
+                            : selectedBook.bookmark
+                    }
+                    onClose={() => setSelectedBook(null)}
                 />
             )}
         </div>
