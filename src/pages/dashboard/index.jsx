@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Banner from "./Banner";
-import Progress from "./Progress";
+import Progress from "../../elements/Progress";
 import BookOfMonth from "./BookOfMonth";
 import Streak from "./Streak";
 import ErrorAlert from "../../alert/ErrorAlert";

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import PDFViewer from "../PDFViewer";
+import { useAuth } from "../context/AuthContext";
+import PDFViewer from "../pages/PDFViewer";
 import ProgressCard from "./ProgressCard";
 
 export default function Progress({ books = [] }) {
