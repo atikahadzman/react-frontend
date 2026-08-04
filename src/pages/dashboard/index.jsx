@@ -6,6 +6,7 @@ import Progress from "./Progress";
 import BookOfMonth from "./BookOfMonth";
 import Streak from "./Streak";
 import ErrorAlert from "../../alert/ErrorAlert";
+import CompletedProgress from "../../elements/CompletedProgress";
 
 import { useAuth } from "../../context/AuthContext";
 import { getBooks, getBookOfTheMonth } from "../../services/bookService";
@@ -91,6 +92,13 @@ export default function Dashboard() {
                     <div className="lg:col-span-1">
                         <BookOfMonth book={bookOfTheMonth}/>
                     </div>
+                </div>
+
+                <div className="py-8">
+                    <CompletedProgress 
+                        books={readingProgress}
+                        user={user}
+                    />
                 </div>
             </div>
         </div>
