@@ -21,7 +21,7 @@ export default function BookBanner({ books, onClose, onSuccess }) {
 
                 <button
                     onClick={() => setShowModal(true)}
-                    className="flex items-center gap-2 border-2 border-white hover:bg-white hover:text-blue-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition mt-4"
+                    className="flex items-center gap-2 border-2 border-white hover:bg-white hover:text-indigo-900 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition mt-4"
                 >
                     <span className="text-lg leading-none">
                         <HiPlus size={20}/>
