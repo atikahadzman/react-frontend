@@ -49,7 +49,6 @@ export default function Alert({ modalTitle, id, onClose, onSuccess }) {
                     <button
                         type="button"
                         onClick={() => {
-                            console.log("Cancel clicked");
                             onClose();
                         }}
                         className="bg-white text-sm border border-gray-300 text-gray-700 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition font-medium"

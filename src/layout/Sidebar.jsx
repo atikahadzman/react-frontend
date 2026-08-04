@@ -49,8 +49,6 @@ export default function Sidebar() {
         navigate("/login");
     };
 
-    // console.log(typeof user?.role_id, user?.role_id);
-
     return (
         <aside
             className={`
