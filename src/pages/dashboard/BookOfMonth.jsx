@@ -34,7 +34,7 @@ export default function BookOfMonth({ book }) {
 
                 {/* title and status */}
                 <div className="flex-1 w-full flex flex-col items-center text-center space-y-4 mt-5 text-[#111111]">
-                    <p className="text-xl font-semibold hover:translate-x-1 transition-transform">
+                    <p className="text-xl font-semibold hover:translate-x-1 transition-transform px-3">
                         {book?.title}
                     </p>
 
