@@ -45,7 +45,7 @@ export default function BookOfMonth({ book }) {
                     <div className="flex justify-center items-center space-y-4 mt-5">
                         <Link 
                             to={`/book/${book.id}`}
-                            className="border-2 border-indigo-900 text-indigo-900 px-3 py-3 hover:bg-white hover:text-blue-600 transition"
+                            className="border-2 border-indigo-900 text-indigo-900 px-5 py-2 hover:bg-indigo-900 hover:text-white transition"
                         >
                             Start reading
                         </Link>
