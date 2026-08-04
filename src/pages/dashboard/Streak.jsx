@@ -45,14 +45,6 @@ export default function Streak({ streak }) {
                 </h3>
 
                 <div className="flex flex-col items-center rounded-xl">
-                    <div className="text-center">
-                        {streak?.streak > 0 && (
-                            <p className="font-bold text-lg text-white">
-                                {streak?.streak} Streak Days
-                            </p>
-                        )}
-                    </div>
-
                     <div className="flex justify-center">
                         <span className="text-sm text-gray-200 font-bold px-2 py-2">
                             {streak?.message}
