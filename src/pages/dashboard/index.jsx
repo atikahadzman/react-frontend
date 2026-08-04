@@ -9,14 +9,15 @@ import ErrorAlert from "../../alert/ErrorAlert";
 
 import { useAuth } from "../../context/AuthContext";
 import { getBooks, getBookOfTheMonth } from "../../services/bookService";
-import { getReadingStreak } from "../../services/progressService";
+import { getReadingStreak, getProgressByUser } from "../../services/progressService";
 
 export default function Dashboard() {
     const navigate = useNavigate();
-    const { token } = useAuth();
+    const { user, token } = useAuth();
     const [books, setBooks] = useState([]);
     const [bookOfTheMonth, setBookOfTheMonth] = useState(null);
     const [streak, setStreak] = useState(null);
+    const [readingProgress, setProgress] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -28,6 +29,7 @@ export default function Dashboard() {
         loadBooks();
         loadBookOfTheMonth();
         loadReadingStreak();
+        loadReadingProgress();
     }, [token]);
 
     const loadBooks = async () => {
@@ -56,6 +58,15 @@ export default function Dashboard() {
             setError("Failed to fetch reading streak");
         }
     };
+    
+    const loadReadingProgress = async () => {
+        try {
+            const data = await getProgressByUser(user?.id);
+            setProgress(data);
+        } catch (err) {
+            setError("Failed to fetch reading progress");
+        }
+    };
 
     return (
         <div className="min-h-screen w-full bg-[#1e1e2c]">
@@ -74,7 +85,7 @@ export default function Dashboard() {
                         <ErrorAlert message={error}/>
                     )}
                     <div className="lg:col-span-2">
-                        <Progress books={books}/>
+                        <Progress books={readingProgress}/>
                     </div>
 
                     <div className="lg:col-span-1">
