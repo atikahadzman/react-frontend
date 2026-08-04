@@ -74,7 +74,7 @@ export default function Dashboard() {
                         <ErrorAlert message={error}/>
                     )}
                     <div className="lg:col-span-2">
-                        <Progress />
+                        <Progress books={books}/>
                     </div>
 
                     <div className="lg:col-span-1">
