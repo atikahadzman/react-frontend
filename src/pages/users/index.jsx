@@ -6,37 +6,42 @@ import { HiPhotograph, HiDocument } from "react-icons/hi";
 import Banner from "./Banner";
 import List from "./List";
 import Form from "./Form";
+import ErrorAlert from "../../alert/ErrorAlert";
+import { getUsers } from "../../services/userService";
+import { getRoles } from "../../services/roleService";
 
 const Users = () => {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const mediaUrl = import.meta.env.VITE_MEDIA_URL;
-    const baseUrl = import.meta.env.VITE_BASE_URL;
-    const [selectedProgressId, setSelectedProgressId] = useState(null);
     const { user, token } = useAuth();
     const [users, setUsers] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [error, setError] = useState("");
     const [showModal, setShowModal] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [selectedBook, setSelectedBook] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (!token) {
             navigate("/login");
-        } else {
-            fetchUsers();
+            return;
         }
+
+        fetchUsers();
+        fetchRoles();
     }, [token]);
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get(apiUrl + "/user", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            setUsers(res.data);
-        } catch {
+            const data = await getUsers();
+            setUsers(data);
+        } catch (err) {
             setError("Failed to fetch users");
+        }
+    };
+
+    const fetchRoles = async () => {
+        try {
+            const data = await getRoles();
+            setRoles(data);
+        } catch (err) {
+            setError("Failed to fetch roles");
         }
     };
 
@@ -46,34 +51,26 @@ const Users = () => {
 
                 {/* header */}
                 <Banner
+                    roles={roles}
                     users={users}
                     onClose={() => setShowModal(false)}
                     onSuccess={fetchUsers}
+                    onError={setError}
                 />
 
                 {/* error */}
                 {error && (
-                    <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-sm text-red-600">{error}</p>
-                    </div>
+                    <ErrorAlert message={error}/>
                 )}
 
                 <List 
                     users={users}
+                    roles={roles}
                     onClose={() => setShowModal(false)}
                     onSuccess={fetchUsers}
+                    onError={setError}
                 />
             </div>
-
-            {/* user modal */}
-            {showModal && (
-                <Form
-                    token={token}
-                    apiUrl={apiUrl}
-                    onClose={() => setShowModal(false)}
-                    onSuccess={fetchUsers}
-                />
-            )}
         </div>
     );
 };

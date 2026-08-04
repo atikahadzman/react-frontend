@@ -2,9 +2,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { HiPhotograph, HiDocument } from "react-icons/hi";
+import { saveUser } from "../../services/userService";
 
-export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
-    const apiUrl = import.meta.env.VITE_API_URL;
+export default function Form({ modalTitle, user, roles, onClose, onSuccess, onError }) {
     const { token } = useAuth();
     const [form, setForm] = useState({
         name: user?.name || "",
@@ -14,25 +14,6 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
         status: user?.status || "",
     });
     const [saving, setSaving] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [roles, setRoles] = useState([]);
-
-    useEffect(() => {
-        fetchRoles();
-    }, []);
-
-    const fetchRoles = async () => {
-        try {
-            const res = await axios.get(`${apiUrl}/role`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setRoles(res.data);
-        } catch (err) {
-            setError("Failed to fetch roles");
-            console.error("Failed to fetch roles");
-        }
-    };
 
     const handleChange = (e) => {
         const { name, type, files, value } = e.target;
@@ -44,35 +25,19 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setSuccess("");
-        setSaving(true);
-        setError("");
+        try {
+            setSaving(true);
+            await saveUser(user, form);
+            onSuccess("User saved!");
 
-        const formData = new FormData();
-        formData.append("name", form.name);
-        formData.append("email", form.email);
-        formData.append("password", form.password);
-        formData.append("role_id", form.role_id);
-        formData.append("status", form.status);
-
-        const isEditing = !!user?.id;
-        const url = isEditing ? `${apiUrl}/user/${user.id}` : `${apiUrl}/user`;
-
-        if (isEditing) {
-            formData.append("_method", "PUT");
-        }
-
-        const res = await axios.post(url, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (res.data.status === "success") {
-            setSuccess(res.data.message);
-        } else {
-            setError(JSON.stringify(res));
+            setTimeout(() => {
+                onClose();
+                window.location.reload();
+            }, 800);
+        } catch (err) {
+            onError(err.response?.data.message ?? "Something went wrong");
+        } finally {
+            setSaving(false);
         }
 
         window.location.reload();
@@ -101,17 +66,6 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
                     </button>
                 </div>
 
-                {error && (
-                    <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-sm text-red-600">{error}</p>
-                    </div>
-                )}
-                {success && (
-                    <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-sm text-green-600">{success}</p>
-                    </div>
-                )}
-
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -123,7 +77,7 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
                             onChange={handleChange}
                             required
                             placeholder="John Doe"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                            className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 text-black"
                         />
                     </div>
 
@@ -132,10 +86,10 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
                             Role <span className="text-red-400">*</span>
                         </label>
                         <select
-                            name="role"
+                            name="role_id"
                             value={form.role_id}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 text-black"
                         >
                             <option value="">Select role</option>
                             {roles.map((role) => (
@@ -157,24 +111,25 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
                             onChange={handleChange}
                             required
                             placeholder="johndoe@example.com"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-white text-black"
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Password <span className="text-red-400">*</span>
-                        </label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={form.password}
-                            onChange={handleChange}
-                            required
-                            placeholder="*************"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                        />
-                    </div>
+                    {modalTitle != "Update User" && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Password <span className="text-red-400">*</span>
+                            </label>
+                            <input
+                                type="password"
+                                name="password"
+                                value={form.password}
+                                onChange={handleChange}
+                                placeholder="*************"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 text-black"
+                            />
+                        </div>
+                    )}
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -184,7 +139,7 @@ export default function Form({ modalTitle, user = [], onClose, onSuccess }) {
                             name="status"
                             value={form.status}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 text-black"
                         >
                             <option value="">Select status</option>
                             {statuses.map((status) => (

@@ -3,8 +3,9 @@ import { useState } from "react";
 import { HiPlus, HiDocument } from "react-icons/hi";
 import Form from "./Form";
 
-export default function BookBanner({ users, onClose, onSuccess }) {
+export default function BookBanner({ users, roles, onClose, onSuccess, onError }) {
     const [showModal, setShowModal] = useState(false);
+    const [error, setError] = useState("");
 
     return (
         <div className="relative">
@@ -34,7 +35,9 @@ export default function BookBanner({ users, onClose, onSuccess }) {
                     <Form
                         modalTitle="Add user"
                         user={{}}
+                        roles={roles}
                         onClose={() => setShowModal(false)}
+                        onError={setError}
                     />
                 )}
             </div>

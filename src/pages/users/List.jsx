@@ -1,50 +1,29 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Form from "./Form";
+import { deleteUser } from "../../services/userService";
 
-export default function List({ users = [], onClose, onSuccess }) {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const [selectedProgressId, setSelectedProgressId] = useState(null);
+export default function List({ users = [], roles, onClose, onSuccess,  onError }) {
     const { user, token } = useAuth();
-    const [selectedUser, setSelectedUser] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [editUser, setEditUser] = useState(null);
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const navigate = useNavigate();
 
     const handleDelete = async (id) => {
-        setError("");
-        setSuccess("");
         if (!confirm("Are you sure you want to delete this user?")) return;
 
-        const res = await axios.delete(apiUrl + "/user/" + id, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.data.status == 'success') {
-            setSuccess(res.data.message);
-        } else {
-            setError(res.data.message);
+        try {
+            const res = await deleteUser(id);
+            onSuccessMessage?.(res.data.message);
+        } catch (err) {
+            onError?.("Failed to delete this user.");
         }
-        window.location.reload();
+        // window.location.reload();
     };
 
     return (
         <div className="w-[800px] px-6 py-8 bg-[#f9f3ee] rounded-md">
-            {error && (
-                <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-red-600">{error}</p>
-                </div>
-            )}
-            {success && (
-                <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-sm text-green-600">{success}</p>
-                </div>
-            )}
-
             {users.length === 0 ? (
                 <div className="text-center py-24 font-poppins font-semibold text-white">
                     Ops, it's empty here
@@ -57,10 +36,9 @@ export default function List({ users = [], onClose, onSuccess }) {
                             <th className="p-4">Email Address</th>
                             <th className="p-4">Role</th>
                             <th className="p-4">Status</th>
-                            <th className="p-4 text-right">Actions</th>
+                            <th className="p-4 text-center">Actions</th>
                         </tr>
                     </thead>
-
                     <tbody className="divide-y divide-slate-100 text-sm text-black">
                         {users.map((user) => (
                         <tr key={user.id} className="transition-colors hover:bg-slate-50/50 text-black">
@@ -92,10 +70,12 @@ export default function List({ users = [], onClose, onSuccess }) {
                                         <Form
                                             modalTitle="Update User"
                                             user={editUser}
+                                            roles={roles}
                                             onClose={() => { 
                                                 setShowModal(false); 
                                                 setEditUser(null); 
                                             }}
+                                            onError={setError}
                                         />
                                     )}
 
