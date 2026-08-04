@@ -16,7 +16,7 @@ export default function Banner() {
                 </p>
 
                 <a href="/books"
-                    className="border-2 border-indigo-900 text-indigo-900 px-6 py-3 hover:bg-white hover:text-blue-600 transition"
+                    className="border-2 border-indigo-900 text-indigo-900 px-5 py-2 hover:bg-indigo-900 hover:text-white transition"
                 >
                     Start now
                 </a>
