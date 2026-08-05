@@ -12,26 +12,17 @@ export default function CompletedProgressCard({ book, user }) {
             className="overflow-hidden rounded-2xl bg-[#f9f3ee] hover:shadow-xl transition-all"
         >
             <div className="p-6">
-                <a
-                    href={book.book_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-block"
-                >
-                    <div className="flex justify-center">
-                        <Link to={`/books/${book.id}`}>
-                            <img
-                                src={book.cover_image_url || "/not-exist.jpg"}
-                                className="w-full md:w-30 md:h-50 object-cover rounded-2xl hover:translate-x-1 transition-transform"
-                                alt={book.title}
-                                loading="lazy"
-                            />
-                        </Link>
-                    </div> 
-                    <p className="text-xl font-semibold text-indigo-900 hover:translate-x-1 transition-transform">
-                        {book.title}
-                    </p>
-                </a>
+                <Link to={`/books/${book.id}`}>
+                    <img
+                        src={book.cover_image_url || "/not-exist.jpg"}
+                        className="w-full md:w-30 md:h-50 object-cover rounded-2xl hover:translate-x-1 transition-transform"
+                        alt={book.title}
+                        loading="lazy"
+                    />
+                </Link>
+                <p className="text-xl font-semibold text-indigo-900 hover:translate-x-1 transition-transform">
+                    {book.title}
+                </p>
 
                 <div className="flex flex-col gap-2 mt-1">
                     <div className="rounded-md px-2 py-1 text-xs font-semibold bg-lime-400 text-lime-900">
