@@ -7,6 +7,7 @@ import PDFViewer from "../PDFViewer";
 import Form from "./Form";
 import List from "./List";
 import Banner from "./Banner";
+import SuccessAlert from "../../alert/SuccessAlert";
 import ErrorAlert from "../../alert/ErrorAlert";
 import { getBookProgressByUser } from "../../services/bookService";
 
@@ -14,6 +15,7 @@ const Books = () => {
     const { user, token } = useAuth();
     const [books, setBooks] = useState([]);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
@@ -31,7 +33,7 @@ const Books = () => {
             const data = await getBookProgressByUser(user?.id);
             setBooks(data);
         } catch (err) {
-            setError("Failed to fetch booksfhbgfdh");
+            setError("Failed to fetch books");
         }
     };
 
@@ -41,12 +43,14 @@ const Books = () => {
 
                 {/* header */}
                 <Banner
-                    books={books}
                     onClose={() => setShowModal(false)}
-                    onSuccess={fetchBooks}
+                    onSuccess={setSuccess}
                 />
 
                 {/* error */}
+                {success && (
+                    <SuccessAlert message={success}/>
+                )}
                 {error && (
                     <ErrorAlert message={error}/>
                 )}
@@ -54,7 +58,8 @@ const Books = () => {
                 <List 
                     books={books}
                     onClose={() => setShowModal(false)}
-                    onSuccess={fetchBooks}
+                    onSuccess={setSuccess}
+                    onError={setError}
                 />
             </div>
 
@@ -64,7 +69,8 @@ const Books = () => {
                     token={token}
                     apiUrl={apiUrl}
                     onClose={() => setShowModal(false)}
-                    onSuccess={fetchBooks}
+                    onSuccess={setSuccess}
+                    onError={setError}
                 />
             )}
         </div>
